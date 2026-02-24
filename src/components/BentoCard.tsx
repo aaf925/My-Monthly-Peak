@@ -110,8 +110,8 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                     <p className="text-neutral-400 text-[10px] font-bold tracking-[0.2em] uppercase">
                         My Monthly Peak · {stats.monthName} {stats.year}
                     </p>
-                    <p className="text-[26px] leading-none font-black mt-1 tracking-tight truncate max-w-[200px]">
-                        @ {userName}
+                    <p className="text-[26px] leading-tight pr-2 font-black mt-1 tracking-tight truncate max-w-[250px]">
+                        @{userName}
                     </p>
                 </div>
                 <div className="bg-strava p-2.5 rounded-2xl shadow-lg shadow-strava/20 shrink-0">
