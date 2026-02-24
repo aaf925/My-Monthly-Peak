@@ -239,7 +239,7 @@ export function processMonthlyStats(
             activityCount: 0, avgSpeed: 0,
             topActivity: null, bestPaceActivity: null, topElevationActivity: null,
             mostActiveDay: null,
-            dominantSport: 'Ninguno',
+            dominantSport: 'None',
         };
     }
 

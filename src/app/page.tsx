@@ -237,34 +237,34 @@ export default function Home() {
                 <div className="flex-1 w-full max-w-md mt-4 md:mt-16 text-center md:text-left flex flex-col">
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 mb-6 text-[10px] font-bold tracking-[0.2em] uppercase bg-strava/10 text-strava rounded">
-                            <Zap className="w-3 h-3 fill-strava" /> Diario de Progreso Anual
+                            <Zap className="w-3 h-3 fill-strava" /> Annual Progress Diary
                         </span>
 
                         <h1 className="text-5xl md:text-6xl font-black mb-4 tracking-tight leading-tight">
-                            Tus Logros,<br />
-                            <span className="text-strava underline decoration-strava/30 underline-offset-8">A Tu Medida.</span>
+                            Your Achievements,<br />
+                            <span className="text-strava underline decoration-strava/30 underline-offset-8">Your Way.</span>
                         </h1>
 
                         <p className="text-neutral-400 text-base mb-8 max-w-sm mx-auto md:mx-0">
-                            Conecta Strava, elige cualquier mes y año en los que hayas entrenado, y compárate con el pasado.
+                            Connect Strava, pick any month and year you trained, and compare yourself to the past.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                             <AnimatePresence mode="wait">
                                 {isLoading ? (
                                     <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 py-3 bg-strava/20 text-strava font-bold rounded-xl flex items-center justify-center gap-2">
-                                        <Loader2 className="w-5 h-5 animate-spin" /> Escaneando todo Strava...
+                                        <Loader2 className="w-5 h-5 animate-spin" /> Scanning Strava...
                                     </motion.div>
                                 ) : isAuthenticated ? (
                                     <motion.button key="export" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} onClick={handleExport} disabled={isExporting} className="group px-6 py-3 bg-white text-black font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-200 transition-colors disabled:opacity-50">
                                         <Share2 className="w-4 h-4" />
-                                        {isExporting ? "Generando..." : "Exportar Story"}
+                                        {isExporting ? "Generating..." : "Export Story"}
                                     </motion.button>
                                 ) : (
                                     <motion.button key="connect" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} onClick={redirectToStravaAuth} className="group relative px-6 py-3 bg-strava text-white font-bold rounded-xl flex items-center justify-center gap-2 overflow-hidden transition-transform hover:scale-105 active:scale-95">
                                         <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                                         <span className="relative flex items-center gap-2">
-                                            Conectar Strava <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                            Connect Strava <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                         </span>
                                     </motion.button>
                                 )}
@@ -272,11 +272,11 @@ export default function Home() {
 
                             {isAuthenticated ? (
                                 <button onClick={handleLogout} className="px-5 py-3 bg-red-500/10 text-red-400 font-bold rounded-xl border border-red-500/20 hover:bg-red-500/20 transition-colors flex items-center justify-center gap-2">
-                                    <LogOut className="w-4 h-4" /> Salir
+                                    <LogOut className="w-4 h-4" /> Sign out
                                 </button>
                             ) : (
                                 <button onClick={toggleDemo} className="px-6 py-3 bg-neutral-900 text-white font-bold rounded-xl border border-neutral-800 hover:bg-neutral-800 transition-colors">
-                                    {appState === "demo" ? "Ocultar Demo" : "Explorar Demo"}
+                                    {appState === "demo" ? "Hide Demo" : "Explore Demo"}
                                 </button>
                             )}
                         </div>
@@ -298,7 +298,7 @@ export default function Home() {
                                         <div className="flex items-center gap-2 mb-4 justify-between">
                                             <div className="flex items-center gap-2">
                                                 <Settings2 className="w-4 h-4 text-neutral-400" />
-                                                <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-300">Selector Inteligente</h3>
+                                                <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-300">Smart Selector</h3>
                                             </div>
                                         </div>
 
@@ -319,7 +319,7 @@ export default function Home() {
                                                         <button key={monthIndex} onClick={() => applyNewDate(targetYear, monthIndex)}
                                                             className={`py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors border ${targetMonth === monthIndex ? "bg-white text-black border-white" : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:text-white"
                                                                 }`}>
-                                                            {MONTH_NAMES_ES[monthIndex]}
+                                                            {MONTH_NAMES_EN[monthIndex]}
                                                         </button>
                                                     ))}
                                                 </div>
@@ -329,12 +329,12 @@ export default function Home() {
                                         {/* Toggles (Interruptores) */}
                                         <div className="space-y-2 mt-4 pt-4 border-t border-white/5">
                                             {Object.entries({
-                                                showComparison: "Comparativa Anual (vs ant.)",
-                                                showMap: "Silueta de Ruta Épica",
-                                                showStory: "Storytelling de Desnivel",
-                                                showMostActiveDay: "Día Más Activo",
-                                                showPeaks: "Los Picos del Mes",
-                                                showCalendar: "Constancia (Días activos)",
+                                                showComparison: "Year-on-Year Comparison",
+                                                showMap: "Epic Route Silhouette",
+                                                showStory: "Elevation Storytelling",
+                                                showMostActiveDay: "Most Active Day",
+                                                showPeaks: "Month's Peak Stats",
+                                                showCalendar: "Consistency (Active days)",
                                             }).map(([key, label]) => {
                                                 const confKey = key as keyof CardConfig;
                                                 const isActive = cardConfig[confKey];
@@ -389,7 +389,7 @@ export default function Home() {
                             >
                                 <CalendarDays className="w-10 h-10 stroke-[1.5]" />
                                 <p className="text-xs font-semibold tracking-widest uppercase text-center px-8 leading-relaxed">
-                                    Compara tu progreso.<br />Conecta tu Strava.
+                                    Track your progress.<br />Connect your Strava.
                                 </p>
                             </motion.div>
                         )}

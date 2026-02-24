@@ -154,7 +154,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                     {/* WIDGET: Mapa (Half Width) */}
                     {config.showMap && svgPath && (
                         <div className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3 flex-1 flex flex-col relative overflow-hidden group min-h-[96px]">
-                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mb-0.5 relative z-10 w-[80%]">La ruta del mes</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mb-0.5 relative z-10 w-[80%]">Top Route</p>
                             <p className="text-[11px] font-bold truncate z-10 relative mb-4 pr-2">{stats.topActivity?.name}</p>
                             <div className="absolute inset-x-0 bottom-0 top-10 flex items-center justify-center p-2 opacity-90 mix-blend-screen drop-shadow-[0_0_8px_rgba(252,76,2,0.6)] object-contain">
                                 <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" className="w-full h-full object-contain">
@@ -177,7 +177,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <div>
                                 <div className="flex items-center gap-1.5 mb-1.5 text-purple-400">
                                     <Flame className="w-3.5 h-3.5" />
-                                    <span className="text-[9px] uppercase font-bold tracking-widest">Ritmo Top</span>
+                                    <span className="text-[9px] uppercase font-bold tracking-widest">Top Pace</span>
                                 </div>
                                 <p className="text-[11px] font-bold leading-tight line-clamp-1 text-neutral-300 pr-1">
                                     {stats.bestPaceActivity.name}
@@ -188,13 +188,13 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                                     <p className="text-[14px] font-black text-white leading-none tracking-tight">
                                         {formatPace(stats.bestPaceActivity.speed)}
                                     </p>
-                                    <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Ritmo</p>
+                                    <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Pace</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-[12px] font-black leading-none tracking-tight text-purple-400">
                                         {formatTime(stats.bestPaceActivity.duration)}
                                     </p>
-                                    <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Tiempo</p>
+                                    <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Time</p>
                                 </div>
                             </div>
                         </div>
@@ -229,16 +229,16 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <div className="absolute -left-4 -top-4 w-16 h-16 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
                             <div className="flex items-center gap-2 mb-1.5 relative z-10">
                                 <div className="w-7 h-7 rounded-full bg-orange-500/20 border border-orange-500/30 flex flex-col items-center justify-center shrink-0 leading-none">
-                                    <span className="text-[6px] font-bold text-orange-400 uppercase tracking-widest">Día</span>
+                                    <span className="text-[6px] font-bold text-orange-400 uppercase tracking-widest">Day</span>
                                     <span className="text-[10px] font-black text-white shadow-sm">{stats.mostActiveDay ? stats.mostActiveDay.date.split(' ')[0] : '-'}</span>
                                 </div>
-                                <span className="text-[8px] uppercase font-bold tracking-widest text-orange-400 leading-tight">El Día Más<br />Activo</span>
+                                <span className="text-[8px] uppercase font-bold tracking-widest text-orange-400 leading-tight">Most Active<br />Day</span>
                             </div>
                             <div className="relative z-10">
                                 <p className="text-[13px] font-black text-white leading-none">
                                     {stats.mostActiveDay ? formatDistance(stats.mostActiveDay.distance) : '0 km'}
                                 </p>
-                                <p className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">totales</p>
+                                <p className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">total</p>
                             </div>
                         </div>
                     )}
@@ -250,7 +250,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <div>
                                 <div className="flex items-center gap-1.5 mb-1 text-yellow-400">
                                     <Medal className="w-3.5 h-3.5 shrink-0 drop-shadow-sm" />
-                                    <span className="text-[9px] uppercase font-bold tracking-widest leading-none drop-shadow-sm">Desnivel Top</span>
+                                    <span className="text-[9px] uppercase font-bold tracking-widest leading-none drop-shadow-sm">Top Climb</span>
                                 </div>
                                 <p className="text-[10px] font-bold text-neutral-300 leading-tight line-clamp-2 pr-1">
                                     {stats.topElevationActivity?.name ?? "N/A"}
@@ -270,7 +270,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                     <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3.5 shrink-0 flex items-center justify-between">
                         <div>
                             <p className="text-xl font-black leading-none">{stats.activeDaysCount}</p>
-                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Días activos</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Active days</p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                             <div className="flex flex-wrap gap-1 w-[120px] justify-end">
