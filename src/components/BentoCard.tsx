@@ -296,7 +296,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 </div>
                 <div className="text-right">
                     <p className="text-[8px] text-neutral-600 uppercase tracking-widest">Generated via</p>
-                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">aaviles.dev/strava</p>
+                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">strava.aaviles.dev</p>
                 </div>
             </motion.div>
         </motion.div>
