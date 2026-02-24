@@ -127,7 +127,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <MapPin className="w-4 h-4 text-orange-500" />
                         </div>
                         <div>
-                            <p className="text-3xl font-black tracking-tighter leading-tight mt-2 break-words">
+                            <p className="text-[26px] font-black tracking-tighter leading-none mt-2 whitespace-nowrap">
                                 {formatDistance(stats.totalDistance)}
                             </p>
                             <ComparisonBadge current={stats.totalDistance} prev={prevStats?.totalDistance} show={config.showComparison} />
@@ -140,7 +140,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <Clock className="w-4 h-4 text-blue-400" />
                         </div>
                         <div>
-                            <p className="text-3xl font-black tracking-tighter leading-tight mt-2 break-words">
+                            <p className="text-[26px] font-black tracking-tighter leading-none mt-2 whitespace-nowrap">
                                 {formatTime(stats.totalTime)}
                             </p>
                             <ComparisonBadge current={stats.totalTime} prev={prevStats?.totalTime} show={config.showComparison} />
