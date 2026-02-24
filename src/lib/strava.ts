@@ -56,6 +56,7 @@ export interface ActivityStats {
     } | null;
     dominantSport: string;
     monthName: string;
+    monthIndex: number;
     year: number;
     daysInMonth: number;
 }
@@ -218,14 +219,26 @@ export const MONTH_NAMES_LONG_EN = [
     'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
+export const MONTH_NAMES_ES = [
+    'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic',
+];
+
+export const MONTH_NAMES_LONG_ES = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+];
+
 export function processMonthlyStats(
     activities: any[],
     year: number,
-    month: number
+    month: number,
+    lang: 'en' | 'es' = 'es'
 ): ActivityStats {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const base = {
-        monthName: MONTH_NAMES_LONG_EN[month],
+        monthName: lang === 'en' ? MONTH_NAMES_LONG_EN[month] : MONTH_NAMES_LONG_ES[month],
+        monthIndex: month,
         year,
         daysInMonth,
         activeDays: [] as number[],
@@ -282,7 +295,7 @@ export function processMonthlyStats(
         .sort((a, b) => b[1] - a[1])[0][0];
 
     const fmtDate = (d: string) =>
-        new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+        new Date(d).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'short' });
 
     let maxDistDay = '';
     let maxDist = 0;
@@ -358,18 +371,27 @@ export const formatPace = (speedInMetersPerSecond: number) => {
     return `${minutes}'${seconds.toString().padStart(2, '0')}"/km`;
 };
 
-const LANDMARKS = [
-    { name: 'el Teide', height: 3718 },
-    { name: 'Mont Blanc', height: 4808 },
-    { name: 'el Everest', height: 8849 },
-    { name: 'la Torre Eiffel', height: 330 },
-    { name: 'el de Tibidabo', height: 512 },
-];
+const LANDMARKS = {
+    es: [
+        { name: 'el Teide', height: 3718 },
+        { name: 'Mont Blanc', height: 4808 },
+        { name: 'el Everest', height: 8849 },
+        { name: 'la Torre Eiffel', height: 330 },
+        { name: 'el de Tibidabo', height: 512 },
+    ],
+    en: [
+        { name: 'Mount Teide', height: 3718 },
+        { name: 'Mont Blanc', height: 4808 },
+        { name: 'Mount Everest', height: 8849 },
+        { name: 'the Eiffel Tower', height: 330 },
+        { name: 'Tibidabo', height: 512 },
+    ]
+};
 
-export function getElevationEquivalence(totalMeters: number): string {
+export function getElevationEquivalence(totalMeters: number, lang: 'es' | 'en' = 'es'): string {
     if (totalMeters === 0) return '0 metros';
-    const landmark = LANDMARKS.find(l => totalMeters / l.height >= 0.3)
-        ?? LANDMARKS[LANDMARKS.length - 1];
+    const landmark = LANDMARKS[lang].find(l => totalMeters / l.height >= 0.3)
+        ?? LANDMARKS[lang][LANDMARKS[lang].length - 1];
     const times = (totalMeters / landmark.height).toFixed(1);
-    return `Subiste ${times}× ${landmark.name}`;
+    return lang === 'en' ? `Climbed ${times}× ${landmark.name}` : `Subiste ${times}× ${landmark.name}`;
 }

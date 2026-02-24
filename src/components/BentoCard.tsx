@@ -11,6 +11,7 @@ import {
     formatPace,
     getElevationEquivalence,
 } from "@/lib/strava";
+import { Language, translations } from "@/lib/translations";
 import {
     MapPin,
     Clock,
@@ -38,6 +39,7 @@ interface BentoCardProps {
     userName: string;
     config: CardConfig;
     isLoading?: boolean;
+    lang?: Language;
 }
 
 const containerVars = {
@@ -73,7 +75,9 @@ const ComparisonBadge = ({ current, prev, show }: { current: number, prev?: numb
     );
 };
 
-const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, config, isLoading }) => {
+const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, config, isLoading, lang = 'es' }) => {
+    const t = translations[lang];
+
     const svgPath = useMemo(() => {
         if (config.showMap && stats.topActivity?.polyline) {
             const coords = decodePolyline(stats.topActivity.polyline);
@@ -99,7 +103,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 <div className="absolute inset-0 z-30 bg-neutral-950/80 backdrop-blur-md flex items-center justify-center">
                     <div className="flex flex-col items-center gap-4 text-neutral-400">
                         <Zap className="w-10 h-10 text-strava animate-pulse" />
-                        <p className="text-sm tracking-widest uppercase font-bold animate-pulse">Analizando...</p>
+                        <p className="text-sm tracking-widest uppercase font-bold animate-pulse">{t.analyzing}</p>
                     </div>
                 </div>
             )}
@@ -108,7 +112,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
             <motion.div variants={itemVars} className="relative z-10 flex justify-between items-start shrink-0">
                 <div>
                     <p className="text-neutral-400 text-[10px] font-bold tracking-[0.2em] uppercase">
-                        My Monthly Peak · {stats.monthName} {stats.year}
+                        My Monthly Peak · {t.monthsLong[stats.monthIndex]} {stats.year}
                     </p>
                     <p className="text-[26px] leading-tight pr-2 font-black mt-1 tracking-tight truncate max-w-[250px]">
                         @{userName}
@@ -131,7 +135,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                                 {formatDistance(stats.totalDistance)}
                             </p>
                             <ComparisonBadge current={stats.totalDistance} prev={prevStats?.totalDistance} show={config.showComparison} />
-                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Distancia</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">{t.distance}</p>
                         </div>
                     </motion.div>
 
@@ -144,7 +148,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                                 {formatTime(stats.totalTime)}
                             </p>
                             <ComparisonBadge current={stats.totalTime} prev={prevStats?.totalTime} show={config.showComparison} />
-                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Tiempo</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">{t.time}</p>
                         </div>
                     </motion.div>
                 </div>
@@ -154,7 +158,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                     {/* WIDGET: Mapa (Half Width) */}
                     {config.showMap && svgPath && (
                         <div className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3 flex-1 flex flex-col relative overflow-hidden group min-h-[96px]">
-                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mb-0.5 relative z-10 w-[80%]">Top Route</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mb-0.5 relative z-10 w-[80%]">{t.topRoute}</p>
                             <p className="text-[11px] font-bold truncate z-10 relative mb-4 pr-2">{stats.topActivity?.name}</p>
                             <div className="absolute inset-x-0 bottom-0 top-10 flex items-center justify-center p-2 opacity-90 mix-blend-screen drop-shadow-[0_0_8px_rgba(252,76,2,0.6)] object-contain">
                                 <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" className="w-full h-full object-contain">
@@ -177,7 +181,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <div>
                                 <div className="flex items-center gap-1.5 mb-1.5 text-purple-400">
                                     <Flame className="w-3.5 h-3.5" />
-                                    <span className="text-[9px] uppercase font-bold tracking-widest">Top Pace</span>
+                                    <span className="text-[9px] uppercase font-bold tracking-widest">{t.topPace}</span>
                                 </div>
                                 <p className="text-[11px] font-bold leading-tight line-clamp-1 text-neutral-300 pr-1">
                                     {stats.bestPaceActivity.name}
@@ -188,13 +192,13 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                                     <p className="text-[14px] font-black text-white leading-none tracking-tight">
                                         {formatPace(stats.bestPaceActivity.speed)}
                                     </p>
-                                    <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Pace</p>
+                                    <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">{t.pace}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-[12px] font-black leading-none tracking-tight text-purple-400">
                                         {formatTime(stats.bestPaceActivity.duration)}
                                     </p>
-                                    <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Time</p>
+                                    <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">{t.timeLabel}</p>
                                 </div>
                             </div>
                         </div>
@@ -211,7 +215,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <div>
                                 <p className="text-xl font-black leading-none">{stats.totalElevation.toFixed(0)}m</p>
                                 <p className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider mt-1 leading-tight">
-                                    {getElevationEquivalence(stats.totalElevation)}
+                                    {getElevationEquivalence(stats.totalElevation, lang)}
                                 </p>
                             </div>
                         </div>
@@ -229,16 +233,16 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <div className="absolute -left-4 -top-4 w-16 h-16 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
                             <div className="flex items-center gap-2 mb-1.5 relative z-10">
                                 <div className="w-7 h-7 rounded-full bg-orange-500/20 border border-orange-500/30 flex flex-col items-center justify-center shrink-0 leading-none">
-                                    <span className="text-[6px] font-bold text-orange-400 uppercase tracking-widest">Day</span>
+                                    <span className="text-[6px] font-bold text-orange-400 uppercase tracking-widest">{t.day}</span>
                                     <span className="text-[10px] font-black text-white shadow-sm">{stats.mostActiveDay ? stats.mostActiveDay.date.split(' ')[0] : '-'}</span>
                                 </div>
-                                <span className="text-[8px] uppercase font-bold tracking-widest text-orange-400 leading-tight">Most Active<br />Day</span>
+                                <span className="text-[8px] uppercase font-bold tracking-widest text-orange-400 leading-tight whitespace-pre-line">{t.mostActiveDay}</span>
                             </div>
                             <div className="relative z-10">
                                 <p className="text-[13px] font-black text-white leading-none">
                                     {stats.mostActiveDay ? formatDistance(stats.mostActiveDay.distance) : '0 km'}
                                 </p>
-                                <p className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">total</p>
+                                <p className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">{t.total}</p>
                             </div>
                         </div>
                     )}
@@ -250,7 +254,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             <div>
                                 <div className="flex items-center gap-1.5 mb-1 text-yellow-400">
                                     <Medal className="w-3.5 h-3.5 shrink-0 drop-shadow-sm" />
-                                    <span className="text-[9px] uppercase font-bold tracking-widest leading-none drop-shadow-sm">Top Climb</span>
+                                    <span className="text-[9px] uppercase font-bold tracking-widest leading-none drop-shadow-sm">{t.topClimb}</span>
                                 </div>
                                 <p className="text-[10px] font-bold text-neutral-300 leading-tight line-clamp-2 pr-1">
                                     {stats.topElevationActivity?.name ?? "N/A"}
@@ -258,7 +262,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             </div>
                             <div className="mt-1">
                                 <p className="text-[13px] font-black text-white leading-none">
-                                    {stats.topElevationActivity ? `${stats.topElevationActivity.elevation.toFixed(0)}m` : "0m"} <span className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest ml-0.5">gain</span>
+                                    {stats.topElevationActivity ? `${stats.topElevationActivity.elevation.toFixed(0)}m` : "0m"} <span className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest ml-0.5">{t.gain}</span>
                                 </p>
                             </div>
                         </div>
@@ -270,7 +274,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                     <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3.5 shrink-0 flex items-center justify-between">
                         <div>
                             <p className="text-xl font-black leading-none">{stats.activeDaysCount}</p>
-                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Active days</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">{t.activeDays}</p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                             <div className="flex flex-wrap gap-1 w-[120px] justify-end">
@@ -291,11 +295,11 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 <div className="flex items-center gap-2">
                     <Activity className="w-4 h-4 text-neutral-600" />
                     <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">
-                        {stats.dominantSport} Dominant
+                        {stats.dominantSport} {t.dominant}
                     </p>
                 </div>
                 <div className="text-right">
-                    <p className="text-[8px] text-neutral-600 uppercase tracking-widest">Generated via</p>
+                    <p className="text-[8px] text-neutral-600 uppercase tracking-widest">{t.generatedVia}</p>
                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">strava.aaviles.dev</p>
                 </div>
             </motion.div>
