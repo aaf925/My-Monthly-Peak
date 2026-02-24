@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "Strava Monthly Pulse | Your Sport Recap",
+    title: "My Monthly Peak | Your Sport Recap",
     description: "Generate aesthetic monthly recaps of your Strava activities.",
 };
 

@@ -108,7 +108,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
             <motion.div variants={itemVars} className="relative z-10 flex justify-between items-start shrink-0">
                 <div>
                     <p className="text-neutral-400 text-[10px] font-bold tracking-[0.2em] uppercase">
-                        Monthly Pulse · {stats.monthName} {stats.year}
+                        My Monthly Peak · {stats.monthName} {stats.year}
                     </p>
                     <p className="text-3xl font-black mt-1 tracking-tight truncate max-w-[200px]">
                         @{userName}
