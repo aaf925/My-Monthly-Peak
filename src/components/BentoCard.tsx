@@ -119,7 +119,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 </div>
             </motion.div>
 
-            <div className="relative z-10 flex-grow flex flex-col gap-[10px]">
+            <div className="relative z-10 flex-grow flex flex-col justify-center gap-[10px]">
                 {/* ROW 1: Distancia + Tiempo */}
                 <div className="grid grid-cols-2 gap-3 shrink-0">
                     <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3.5 flex flex-col justify-between min-h-[96px]">
