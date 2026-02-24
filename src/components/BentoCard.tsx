@@ -110,7 +110,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                     <p className="text-neutral-400 text-[10px] font-bold tracking-[0.2em] uppercase">
                         My Monthly Peak · {stats.monthName} {stats.year}
                     </p>
-                    <p className="text-3xl font-black mt-1 tracking-tight truncate max-w-[200px]">
+                    <p className="text-[26px] leading-none font-black mt-1 tracking-tight truncate max-w-[200px]">
                         @{userName}
                     </p>
                 </div>
@@ -122,29 +122,29 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
             <div className="relative z-10 flex-grow flex flex-col gap-[10px]">
                 {/* ROW 1: Distancia + Tiempo */}
                 <div className="grid grid-cols-2 gap-3 shrink-0">
-                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 flex flex-col justify-between min-h-[105px]">
-                        <div className="w-8 h-8 rounded-xl bg-orange-500/15 flex items-center justify-center">
-                            <MapPin className="w-4 h-4 text-orange-500" />
+                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3.5 flex flex-col justify-between min-h-[96px]">
+                        <div className="w-7 h-7 rounded-lg bg-orange-500/15 flex items-center justify-center">
+                            <MapPin className="w-3.5 h-3.5 text-orange-500" />
                         </div>
                         <div>
-                            <p className="text-[26px] font-black tracking-tighter leading-none mt-2 whitespace-nowrap">
+                            <p className="text-[24px] font-black tracking-tighter leading-none mt-1.5 whitespace-nowrap">
                                 {formatDistance(stats.totalDistance)}
                             </p>
                             <ComparisonBadge current={stats.totalDistance} prev={prevStats?.totalDistance} show={config.showComparison} />
-                            <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Distancia</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Distancia</p>
                         </div>
                     </motion.div>
 
-                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 flex flex-col justify-between min-h-[105px]">
-                        <div className="w-8 h-8 rounded-xl bg-blue-500/15 flex items-center justify-center">
-                            <Clock className="w-4 h-4 text-blue-400" />
+                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3.5 flex flex-col justify-between min-h-[96px]">
+                        <div className="w-7 h-7 rounded-lg bg-blue-500/15 flex items-center justify-center">
+                            <Clock className="w-3.5 h-3.5 text-blue-400" />
                         </div>
                         <div>
-                            <p className="text-[26px] font-black tracking-tighter leading-none mt-2 whitespace-nowrap">
+                            <p className="text-[24px] font-black tracking-tighter leading-none mt-1.5 whitespace-nowrap">
                                 {formatTime(stats.totalTime)}
                             </p>
                             <ComparisonBadge current={stats.totalTime} prev={prevStats?.totalTime} show={config.showComparison} />
-                            <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Tiempo</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Tiempo</p>
                         </div>
                     </motion.div>
                 </div>
@@ -153,9 +153,9 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 <motion.div variants={itemVars} className="flex gap-3 shrink-0">
                     {/* WIDGET: Mapa (Half Width) */}
                     {config.showMap && svgPath && (
-                        <div className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3 flex-1 flex flex-col relative overflow-hidden group min-h-[100px]">
+                        <div className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3 flex-1 flex flex-col relative overflow-hidden group min-h-[96px]">
                             <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mb-0.5 relative z-10 w-[80%]">La ruta del mes</p>
-                            <p className="text-[12px] font-bold truncate z-10 relative mb-4 pr-2">{stats.topActivity?.name}</p>
+                            <p className="text-[11px] font-bold truncate z-10 relative mb-4 pr-2">{stats.topActivity?.name}</p>
                             <div className="absolute inset-x-0 bottom-0 top-10 flex items-center justify-center p-2 opacity-90 mix-blend-screen drop-shadow-[0_0_8px_rgba(252,76,2,0.6)] object-contain">
                                 <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" className="w-full h-full object-contain">
                                     <path d={svgPath} fill="none" stroke="url(#gradientMap)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="svg-draw-animation" />
@@ -172,7 +172,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
 
                     {/* WIDGET: Ritmo Top (Half Width) */}
                     {config.showPeaks && stats.bestPaceActivity && (
-                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between overflow-hidden relative min-h-[110px]">
+                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between overflow-hidden relative min-h-[96px]">
                             <div className="absolute -right-4 -top-4 w-20 h-20 bg-purple-500/10 rounded-full blur-xl pointer-events-none" />
                             <div>
                                 <div className="flex items-center gap-1.5 mb-1.5 text-purple-400">
@@ -185,13 +185,13 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                             </div>
                             <div className="mt-1 flex items-end justify-between">
                                 <div>
-                                    <p className="text-[15px] font-black text-white leading-none tracking-tight">
+                                    <p className="text-[14px] font-black text-white leading-none tracking-tight">
                                         {formatPace(stats.bestPaceActivity.speed)}
                                     </p>
                                     <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Ritmo</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-[13px] font-black leading-none tracking-tight text-purple-400">
+                                    <p className="text-[12px] font-black leading-none tracking-tight text-purple-400">
                                         {formatTime(stats.bestPaceActivity.duration)}
                                     </p>
                                     <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Tiempo</p>
@@ -203,13 +203,13 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
 
                 {/* ROW: Elevación full width */}
                 {config.showStory && stats.totalElevation > 0 && (
-                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 shrink-0 flex items-center justify-between z-20">
+                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3.5 shrink-0 flex items-center justify-between z-20">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                                <Mountain className="w-5 h-5 text-emerald-400" />
+                            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                                <Mountain className="w-4 h-4 text-emerald-400" />
                             </div>
                             <div>
-                                <p className="text-2xl font-black leading-none">{stats.totalElevation.toFixed(0)}m</p>
+                                <p className="text-xl font-black leading-none">{stats.totalElevation.toFixed(0)}m</p>
                                 <p className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider mt-1 leading-tight">
                                     {getElevationEquivalence(stats.totalElevation)}
                                 </p>
@@ -225,40 +225,40 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 <motion.div variants={itemVars} className="flex gap-3 shrink-0">
                     {/* Día Más Activo (Adaptive width) */}
                     {config.showMostActiveDay && (
-                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[85px] z-10">
+                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[80px] z-10">
                             <div className="absolute -left-4 -top-4 w-16 h-16 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
-                            <div className="flex items-center gap-2 mb-2 relative z-10">
-                                <div className="w-8 h-8 rounded-full bg-orange-500/20 border border-orange-500/30 flex flex-col items-center justify-center shrink-0 leading-none">
-                                    <span className="text-[7px] font-bold text-orange-400 uppercase tracking-widest">Día</span>
-                                    <span className="text-[11px] font-black text-white shadow-sm">{stats.mostActiveDay ? stats.mostActiveDay.date.split(' ')[0] : '-'}</span>
+                            <div className="flex items-center gap-2 mb-1.5 relative z-10">
+                                <div className="w-7 h-7 rounded-full bg-orange-500/20 border border-orange-500/30 flex flex-col items-center justify-center shrink-0 leading-none">
+                                    <span className="text-[6px] font-bold text-orange-400 uppercase tracking-widest">Día</span>
+                                    <span className="text-[10px] font-black text-white shadow-sm">{stats.mostActiveDay ? stats.mostActiveDay.date.split(' ')[0] : '-'}</span>
                                 </div>
                                 <span className="text-[8px] uppercase font-bold tracking-widest text-orange-400 leading-tight">El Día Más<br />Activo</span>
                             </div>
                             <div className="relative z-10">
-                                <p className="text-sm font-black text-white leading-none">
+                                <p className="text-[13px] font-black text-white leading-none">
                                     {stats.mostActiveDay ? formatDistance(stats.mostActiveDay.distance) : '0 km'}
                                 </p>
-                                <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">totales</p>
+                                <p className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">totales</p>
                             </div>
                         </div>
                     )}
 
                     {/* Desnivel Top (Adaptive width) */}
                     {config.showPeaks && (
-                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[85px] z-10">
+                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[80px] z-10">
                             <div className="absolute -right-4 -top-4 w-20 h-20 bg-yellow-500/10 rounded-full blur-xl pointer-events-none" />
                             <div>
-                                <div className="flex items-center gap-1.5 mb-1.5 text-yellow-400">
+                                <div className="flex items-center gap-1.5 mb-1 text-yellow-400">
                                     <Medal className="w-3.5 h-3.5 shrink-0 drop-shadow-sm" />
                                     <span className="text-[9px] uppercase font-bold tracking-widest leading-none drop-shadow-sm">Desnivel Top</span>
                                 </div>
-                                <p className="text-[11px] font-bold text-neutral-300 leading-tight line-clamp-2 pr-1">
+                                <p className="text-[10px] font-bold text-neutral-300 leading-tight line-clamp-2 pr-1">
                                     {stats.topElevationActivity?.name ?? "N/A"}
                                 </p>
                             </div>
                             <div className="mt-1">
-                                <p className="text-sm font-black text-white leading-none">
-                                    {stats.topElevationActivity ? `${stats.topElevationActivity.elevation.toFixed(0)}m` : "0m"} <span className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest ml-0.5">gain</span>
+                                <p className="text-[13px] font-black text-white leading-none">
+                                    {stats.topElevationActivity ? `${stats.topElevationActivity.elevation.toFixed(0)}m` : "0m"} <span className="text-[8px] text-neutral-500 font-bold uppercase tracking-widest ml-0.5">gain</span>
                                 </p>
                             </div>
                         </div>
@@ -267,10 +267,10 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
 
                 {/* WIDGET: Calendario */}
                 {config.showCalendar && (
-                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 shrink-0 flex items-center justify-between">
+                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3.5 shrink-0 flex items-center justify-between">
                         <div>
-                            <p className="text-2xl font-black leading-none">{stats.activeDaysCount}</p>
-                            <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Días activos</p>
+                            <p className="text-xl font-black leading-none">{stats.activeDaysCount}</p>
+                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Días activos</p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                             <div className="flex flex-wrap gap-1 w-[120px] justify-end">
