@@ -88,7 +88,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
             variants={containerVars}
             initial="hidden"
             animate="show"
-            className="relative w-full max-w-[380px] aspect-[9/16] bg-neutral-950 text-white rounded-[2.5rem] overflow-hidden border border-neutral-800 shadow-2xl p-6 flex flex-col justify-between"
+            className="relative w-full max-w-[380px] aspect-[9/16] bg-neutral-950 text-white rounded-[2.5rem] overflow-hidden border border-neutral-800 shadow-2xl p-5 flex flex-col justify-between"
         >
             <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
                 <div className="absolute -top-32 -right-32 w-80 h-80 bg-strava/15 blur-[100px] rounded-full" />
@@ -119,10 +119,10 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 </div>
             </motion.div>
 
-            <div className="relative z-10 flex-grow flex flex-col gap-3">
+            <div className="relative z-10 flex-grow flex flex-col gap-[10px]">
                 {/* ROW 1: Distancia + Tiempo */}
                 <div className="grid grid-cols-2 gap-3 shrink-0">
-                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 flex flex-col justify-between min-h-[115px]">
+                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 flex flex-col justify-between min-h-[105px]">
                         <div className="w-8 h-8 rounded-xl bg-orange-500/15 flex items-center justify-center">
                             <MapPin className="w-4 h-4 text-orange-500" />
                         </div>
@@ -135,7 +135,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                         </div>
                     </motion.div>
 
-                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 flex flex-col justify-between min-h-[115px]">
+                    <motion.div variants={itemVars} className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 flex flex-col justify-between min-h-[105px]">
                         <div className="w-8 h-8 rounded-xl bg-blue-500/15 flex items-center justify-center">
                             <Clock className="w-4 h-4 text-blue-400" />
                         </div>
@@ -153,7 +153,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 <motion.div variants={itemVars} className="flex gap-3 shrink-0">
                     {/* WIDGET: Mapa (Half Width) */}
                     {config.showMap && svgPath && (
-                        <div className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3 flex-1 flex flex-col relative overflow-hidden group min-h-[110px]">
+                        <div className="bg-neutral-900/60 backdrop-blur-md border border-white/5 rounded-3xl p-3 flex-1 flex flex-col relative overflow-hidden group min-h-[100px]">
                             <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mb-0.5 relative z-10 w-[80%]">La ruta del mes</p>
                             <p className="text-[12px] font-bold truncate z-10 relative mb-4 pr-2">{stats.topActivity?.name}</p>
                             <div className="absolute inset-x-0 bottom-0 top-10 flex items-center justify-center p-2 opacity-90 mix-blend-screen drop-shadow-[0_0_8px_rgba(252,76,2,0.6)] object-contain">
@@ -225,7 +225,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 <motion.div variants={itemVars} className="flex gap-3 shrink-0">
                     {/* Día Más Activo (Adaptive width) */}
                     {config.showMostActiveDay && (
-                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[90px] z-10">
+                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[85px] z-10">
                             <div className="absolute -left-4 -top-4 w-16 h-16 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
                             <div className="flex items-center gap-2 mb-2 relative z-10">
                                 <div className="w-8 h-8 rounded-full bg-orange-500/20 border border-orange-500/30 flex flex-col items-center justify-center shrink-0 leading-none">
@@ -245,7 +245,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
 
                     {/* Desnivel Top (Adaptive width) */}
                     {config.showPeaks && (
-                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[90px] z-10">
+                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[85px] z-10">
                             <div className="absolute -right-4 -top-4 w-20 h-20 bg-yellow-500/10 rounded-full blur-xl pointer-events-none" />
                             <div>
                                 <div className="flex items-center gap-1.5 mb-1.5 text-yellow-400">
@@ -287,7 +287,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                 )}
             </div>
 
-            <motion.div variants={itemVars} className="relative z-10 pt-3 flex justify-between items-end shrink-0 mt-auto border-t border-white/5">
+            <motion.div variants={itemVars} className="relative z-10 pt-2 flex justify-between items-end shrink-0 mt-auto border-t border-white/5">
                 <div className="flex items-center gap-2">
                     <Activity className="w-4 h-4 text-neutral-600" />
                     <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">
