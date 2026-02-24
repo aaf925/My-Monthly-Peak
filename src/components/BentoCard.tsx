@@ -221,11 +221,11 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                     </motion.div>
                 )}
 
-                {/* ROW: Grid (Día Más Activo + Desnivel Top) */}
-                <motion.div variants={itemVars} className="grid grid-cols-2 gap-3 shrink-0">
-                    {/* Día Más Activo (Half width) */}
+                {/* ROW: Flex (Día Más Activo + Desnivel Top) */}
+                <motion.div variants={itemVars} className="flex gap-3 shrink-0">
+                    {/* Día Más Activo (Adaptive width) */}
                     {config.showMostActiveDay && (
-                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex flex-col justify-between relative overflow-hidden min-h-[90px] z-10">
+                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[90px] z-10">
                             <div className="absolute -left-4 -top-4 w-16 h-16 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
                             <div className="flex items-center gap-2 mb-2 relative z-10">
                                 <div className="w-8 h-8 rounded-full bg-orange-500/20 border border-orange-500/30 flex flex-col items-center justify-center shrink-0 leading-none">
@@ -243,9 +243,9 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
                         </div>
                     )}
 
-                    {/* Desnivel Top (Half width) */}
+                    {/* Desnivel Top (Adaptive width) */}
                     {config.showPeaks && (
-                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex flex-col justify-between relative overflow-hidden min-h-[90px] z-10">
+                        <div className="bg-neutral-900/40 border border-white/5 rounded-3xl p-3 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[90px] z-10">
                             <div className="absolute -right-4 -top-4 w-20 h-20 bg-yellow-500/10 rounded-full blur-xl pointer-events-none" />
                             <div>
                                 <div className="flex items-center gap-1.5 mb-1.5 text-yellow-400">
