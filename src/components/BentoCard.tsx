@@ -88,7 +88,7 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
             variants={containerVars}
             initial="hidden"
             animate="show"
-            className="relative w-full max-w-[380px] min-h-[660px] bg-neutral-950 text-white rounded-[2.5rem] overflow-hidden border border-neutral-800 shadow-2xl p-6 flex flex-col gap-4"
+            className="relative w-full max-w-[380px] aspect-[9/16] bg-neutral-950 text-white rounded-[2.5rem] overflow-hidden border border-neutral-800 shadow-2xl p-6 flex flex-col justify-between"
         >
             <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
                 <div className="absolute -top-32 -right-32 w-80 h-80 bg-strava/15 blur-[100px] rounded-full" />
