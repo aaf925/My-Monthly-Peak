@@ -93,26 +93,39 @@ export default function Home() {
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const code = params.get("code");
-        const oauthError = params.get("error");
-        if (oauthError) {
-            setError("Conexión cancelada por el usuario.");
+        const errorParam = params.get("error");
+        if (errorParam) {
+            setError(`Error de autorización: ${errorParam}`);
             setAppState("error");
             window.history.replaceState({}, document.title, window.location.pathname);
             return;
         }
-        if (code) {
-            window.history.replaceState({}, document.title, window.location.pathname);
-            handleTokenExchange(code);
+
+        const getCookie = (name: string) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop()?.split(';').shift();
+            return null;
+        };
+
+        const cookieSession = getCookie("strava_session");
+
+        if (cookieSession) {
+            try {
+                // Strava session objects are URL-encoded strings in cookies
+                const data = JSON.parse(decodeURIComponent(cookieSession));
+                startWithTokenData(data);
+            } catch (err) {
+                console.error("No se pudo decodificar la cookie strava_session:", err);
+            }
         }
         // eslint-disable-next-deps
     }, []);
 
-    const handleTokenExchange = async (code: string) => {
+    const startWithTokenData = async (data: any) => {
         setAppState("loading");
         setError(null);
         try {
-            const data = await exchangeCodeForToken(code);
             setTokenData(data);
 
             const dates = await fetchAvailableDates(data.access_token);
@@ -122,7 +135,7 @@ export default function Home() {
             if (years.length > 0) {
                 const latestYear = years[0];
                 const latestMonths = dates[latestYear];
-                const latestMonth = latestMonths[latestMonths.length - 1]; // el mes más alto de ese año
+                const latestMonth = latestMonths[latestMonths.length - 1];
 
                 setTargetYear(latestYear);
                 setTargetMonth(latestMonth);
@@ -132,7 +145,7 @@ export default function Home() {
                 setAppState("error");
             }
         } catch (err) {
-            setError("Fallo al intercambiar el token de Strava.");
+            setError("Fallo al cargar tus datos desde Strava. Tu sesión podría haber expirado.");
             setAppState("error");
         }
     };
@@ -180,6 +193,7 @@ export default function Home() {
         setPrevStats(DEMO_PREV_STATS);
         setAppState("idle");
         setError(null);
+        document.cookie = "strava_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     };
 
     const toggleDemo = () => {
