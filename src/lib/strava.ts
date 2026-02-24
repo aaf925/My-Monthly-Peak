@@ -67,7 +67,9 @@ export function redirectToStravaAuth() {
 
     // Automatically construct the correct callback URL based on REDIRECT_URI
     const baseUri = REDIRECT_URI.endsWith('/') ? REDIRECT_URI.slice(0, -1) : REDIRECT_URI;
-    const finalRedirectUri = `${baseUri}/api/auth/callback`;
+    const finalRedirectUri = baseUri.endsWith('/api/auth/callback')
+        ? baseUri
+        : `${baseUri}/api/auth/callback`;
 
     url.searchParams.set('client_id', CLIENT_ID);
     url.searchParams.set('redirect_uri', finalRedirectUri);
