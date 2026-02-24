@@ -10,7 +10,7 @@ import {
     fetchAvailableDates,
     fetchMonthlyActivities,
     processMonthlyStats,
-    MONTH_NAMES_ES
+    MONTH_NAMES_EN
 } from "@/lib/strava";
 import { exportAsImage } from "@/lib/export";
 import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays } from "lucide-react";
@@ -23,33 +23,33 @@ const DEMO_STATS: ActivityStats = {
     activityCount: 14,
     avgSpeed: 4.2,
     dominantSport: "Ride",
-    monthName: "Febrero",
+    monthName: "February",
     year: 2026,
     daysInMonth: 28,
     activeDays: [2, 4, 5, 8, 10, 11, 14, 15, 18, 20, 22, 25, 26, 28],
     activeDaysCount: 14,
     mostActiveDay: {
-        date: "14 feb",
+        date: "14 Feb",
         distance: 42000
     },
     topActivity: {
-        name: "Subida al Moncayo 🏔️",
+        name: "Moncayo climb 🏔️",
         distance: 42000,
         elevation: 1200,
-        date: "14 feb",
+        date: "14 Feb",
         polyline: "ky`yFn}n|@a@q@_@cA`AcBvB",
     },
     bestPaceActivity: {
-        name: "10' calentamiento + 15' a tope + 5' soltar",
+        name: "10' warmup + 15' all-out + 5' cooldown",
         speed: 5.5,
         duration: 1800,
-        date: "22 feb",
+        date: "22 Feb",
         type: "Run"
     },
     topElevationActivity: {
-        name: "Subida al Moncayo 🏔️",
+        name: "Moncayo climb 🏔️",
         elevation: 1200,
-        date: "14 feb",
+        date: "14 Feb",
     }
 };
 

@@ -208,14 +208,14 @@ export function polylineToSvgPath(points: [number, number][]): string {
 
 // ─── Stat Processors ──────────────────────────────────────────────────────────
 
-export const MONTH_NAMES_ES = [
-    'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic',
+export const MONTH_NAMES_EN = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
 
-export const MONTH_NAMES_LONG_ES = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+export const MONTH_NAMES_LONG_EN = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
 export function processMonthlyStats(
@@ -225,7 +225,7 @@ export function processMonthlyStats(
 ): ActivityStats {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const base = {
-        monthName: MONTH_NAMES_LONG_ES[month],
+        monthName: MONTH_NAMES_LONG_EN[month],
         year,
         daysInMonth,
         activeDays: [] as number[],
@@ -282,7 +282,7 @@ export function processMonthlyStats(
         .sort((a, b) => b[1] - a[1])[0][0];
 
     const fmtDate = (d: string) =>
-        new Date(d).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+        new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
 
     let maxDistDay = '';
     let maxDist = 0;
