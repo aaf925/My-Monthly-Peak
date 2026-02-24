@@ -64,8 +64,13 @@ export interface ActivityStats {
 
 export function redirectToStravaAuth() {
     const url = new URL('https://www.strava.com/oauth/authorize');
+
+    // Automatically construct the correct callback URL based on REDIRECT_URI
+    const baseUri = REDIRECT_URI.endsWith('/') ? REDIRECT_URI.slice(0, -1) : REDIRECT_URI;
+    const finalRedirectUri = `${baseUri}/api/auth/callback`;
+
     url.searchParams.set('client_id', CLIENT_ID);
-    url.searchParams.set('redirect_uri', REDIRECT_URI);
+    url.searchParams.set('redirect_uri', finalRedirectUri);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('scope', 'read,activity:read_all');
     url.searchParams.set('approval_prompt', 'force');
