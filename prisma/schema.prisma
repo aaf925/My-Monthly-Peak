@@ -27,6 +27,8 @@ model User {
     email       String?
     avatarUrl   String?
     emailRemindersEnabled Boolean @default(false)
+    annualGoalKm Float?
+    maxHeartRate Int?
 
     createdAt            DateTime @default(now())
     updatedAt            DateTime @updatedAt

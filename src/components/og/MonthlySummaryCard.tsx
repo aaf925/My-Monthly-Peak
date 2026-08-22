@@ -12,6 +12,11 @@ export interface MonthlySummaryProps {
     activityCount: number;
     activeDays: number;
     dominantSport: string;
+    trend?: { label: string; distanceKm: number }[];
+    goalPercent?: number | null;
+    goalCurrentKm?: number | null;
+    goalKm?: number | null;
+    zones?: number[];
 }
 
 const STRAVA = "#FC4C02";
@@ -45,6 +50,11 @@ export default function MonthlySummaryCard({
     activityCount,
     activeDays,
     dominantSport,
+    trend,
+    goalPercent,
+    goalCurrentKm,
+    goalKm,
+    zones,
 }: MonthlySummaryProps) {
     const isPro = plan === "PRO";
     const months = lang === "es" ? MONTHS_ES : MONTHS_EN;
@@ -196,6 +206,107 @@ export default function MonthlySummaryCard({
                     </span>
                 </div>
             </div>
+
+            {/* ─── PRO: Tendencias + Meta + Zonas ─── */}
+            {isPro && (trend || goalPercent !== null || zones) && (
+                <div
+                    style={{
+                        display: "flex",
+                        gap: "16px",
+                        position: "relative",
+                        zIndex: 1,
+                    }}
+                >
+                    {trend && trend.length > 0 && (
+                        <div
+                            style={{
+                                flex: 1,
+                                borderRadius: "20px",
+                                border: "1px solid #262626",
+                                background: "#111113",
+                                padding: "16px 18px",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "8px",
+                            }}
+                        >
+                            <span style={{ fontSize: "13px", fontWeight: 700, color: "#A3A3A3", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                                {lang === "es" ? "6 meses" : "6 months"}
+                            </span>
+                            <div style={{ display: "flex", alignItems: "flex-end", gap: "6px", height: "52px" }}>
+                                {trend.map((p) => {
+                                    const max = Math.max(...trend.map((t) => t.distanceKm), 1);
+                                    const h = Math.max(8, (p.distanceKm / max) * 44);
+                                    return (
+                                        <div key={p.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", flex: 1 }}>
+                                            <div style={{ width: "14px", borderRadius: "4px", height: `${h}px`, background: STRAVA }} />
+                                            <span style={{ fontSize: "10px", fontWeight: 600, color: "#737373" }}>{p.label}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {goalPercent !== null && (
+                        <div
+                            style={{
+                                flex: 1,
+                                borderRadius: "20px",
+                                border: "1px solid #262626",
+                                background: "#111113",
+                                padding: "16px 18px",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "8px",
+                            }}
+                        >
+                            <span style={{ fontSize: "13px", fontWeight: 700, color: "#A3A3A3", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                                {lang === "es" ? "Meta anual" : "Year goal"}
+                            </span>
+                            <span style={{ fontSize: "26px", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em" }}>
+                                {goalPercent}%
+                            </span>
+                            <div style={{ width: "100%", height: "10px", borderRadius: "9999px", background: "#262626", overflow: "hidden" }}>
+                                <div style={{ width: `${goalPercent}%`, height: "100%", borderRadius: "9999px", background: "#10B981" }} />
+                            </div>
+                            <span style={{ fontSize: "12px", fontWeight: 600, color: "#737373" }}>
+                                {goalCurrentKm} / {goalKm} km
+                            </span>
+                        </div>
+                    )}
+
+                    {zones && zones.length >= 5 && (
+                        <div
+                            style={{
+                                flex: 1,
+                                borderRadius: "20px",
+                                border: "1px solid #262626",
+                                background: "#111113",
+                                padding: "16px 18px",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "8px",
+                            }}
+                        >
+                            <span style={{ fontSize: "13px", fontWeight: 700, color: "#A3A3A3", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                                {lang === "es" ? "Zonas de esfuerzo" : "Effort zones"}
+                            </span>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                {zones.map((pct, i) => (
+                                    <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <span style={{ fontSize: "11px", fontWeight: 800, color: "#A3A3A3", width: "20px" }}>Z{i + 1}</span>
+                                        <div style={{ flex: 1, height: "8px", borderRadius: "9999px", background: "#262626", overflow: "hidden" }}>
+                                            <div style={{ width: `${Math.max(4, pct)}%`, height: "100%", borderRadius: "9999px", background: ["#3B82F6", "#10B981", "#F59E0B", "#F97316", "#EF4444"][i] }} />
+                                        </div>
+                                        <span style={{ fontSize: "11px", fontWeight: 700, color: "#fff", width: "28px", textAlign: "right" }}>{pct}%</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* ─── Watermark FREE / Footer PRO ─── */}
             {!isPro ? (

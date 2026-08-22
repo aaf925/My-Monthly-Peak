@@ -16,6 +16,8 @@ export async function GET(req: NextRequest) {
             email: user.email,
             emailRemindersEnabled: user.emailRemindersEnabled,
             plan: user.plan,
+            annualGoalKm: user.annualGoalKm,
+            maxHeartRate: user.maxHeartRate,
         });
     } catch (err) {
         if (err instanceof ProRequiredError) {
@@ -34,9 +36,11 @@ export async function PATCH(req: NextRequest) {
         const body = (await req.json().catch(() => ({}))) as {
             email?: string;
             emailRemindersEnabled?: boolean;
+            annualGoalKm?: number | null;
+            maxHeartRate?: number | null;
         };
 
-        const data: { email?: string | null; emailRemindersEnabled?: boolean } = {};
+        const data: { email?: string | null; emailRemindersEnabled?: boolean; annualGoalKm?: number | null; maxHeartRate?: number | null } = {};
         if (typeof body.email === "string") {
             const email = body.email.trim().toLowerCase();
             if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -46,6 +50,14 @@ export async function PATCH(req: NextRequest) {
         }
         if (typeof body.emailRemindersEnabled === "boolean") {
             data.emailRemindersEnabled = body.emailRemindersEnabled;
+        }
+        if ("annualGoalKm" in body) {
+            data.annualGoalKm =
+                body.annualGoalKm === null ? null : Math.max(0, Number(body.annualGoalKm) || 0);
+        }
+        if ("maxHeartRate" in body) {
+            data.maxHeartRate =
+                body.maxHeartRate === null ? null : Math.max(0, Number(body.maxHeartRate) || 0);
         }
 
         if (Object.keys(data).length > 0) {

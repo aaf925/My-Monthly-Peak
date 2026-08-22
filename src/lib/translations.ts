@@ -79,6 +79,21 @@ export const translations = {
         recordActivityCount: "Actividades",
         recordOf: "de",
 
+        // ─── Panel PRO venta ───
+        proPrice: "5€/mes",
+        proCancelAnyTime: "Cancela cuando quieras",
+        proFeatureSummary: "Resumen IA de tu mes con gpt-4o-mini",
+        proFeatureTrueEffortLong: "True Effort: ritmos ajustados por viento y temperatura",
+        proFeatureCleanImageLong: "Imagen PRO sin marca de agua para compartir",
+        proFeatureTrends: "Tendencias de 6 meses en tu imagen",
+        proFeatureGoal: "Meta anual y progreso",
+        proFeatureZones: "Zonas de esfuerzo por pulsaciones",
+        annualGoalTitle: "Meta anual (km)",
+        annualGoalPlaceholder: "ej. 3000",
+        annualGoalSave: "Guardar meta",
+        annualGoalSaved: "Meta guardada",
+        annualGoalCurrent: "km este año",
+
         // month names
         monthsLong: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
@@ -164,6 +179,21 @@ export const translations = {
         recordActiveDays: "Active days",
         recordActivityCount: "Activities",
         recordOf: "of",
+
+        // ─── Panel PRO venta ───
+        proPrice: "€5/month",
+        proCancelAnyTime: "Cancel anytime",
+        proFeatureSummary: "AI summary of your month with gpt-4o-mini",
+        proFeatureTrueEffortLong: "True Effort: paces adjusted for wind and temperature",
+        proFeatureCleanImageLong: "Clean PRO image without watermark to share",
+        proFeatureTrends: "6-month trends in your image",
+        proFeatureGoal: "Annual goal and progress",
+        proFeatureZones: "Heart-rate effort zones",
+        annualGoalTitle: "Annual goal (km)",
+        annualGoalPlaceholder: "e.g. 3000",
+        annualGoalSave: "Save goal",
+        annualGoalSaved: "Goal saved",
+        annualGoalCurrent: "km this year",
 
         // month names
         monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

@@ -13,7 +13,7 @@ import {
 } from "@/lib/strava";
 import { translations, Language } from "@/lib/translations";
 import { exportAsImage } from "@/lib/export";
-import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell, Medal } from "lucide-react";
+import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell, Medal, TrendingUp, Target, HeartPulse } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const DEMO_STATS: ActivityStats = {
@@ -95,6 +95,9 @@ export default function Home() {
         activityCount: { month: string; year: number; value: number } | null;
     } | null>(null);
 
+    const [annualGoalKm, setAnnualGoalKm] = useState<number | null>(null);
+    const [annualGoalInput, setAnnualGoalInput] = useState("");
+
     const [targetYear, setTargetYear] = useState(new Date().getFullYear());
     const [targetMonth, setTargetMonth] = useState(new Date().getMonth());
     const [availableDates, setAvailableDates] = useState<Record<number, number[]> | null>(null);
@@ -151,6 +154,8 @@ export default function Home() {
                             setUserEmail(p.email ?? "");
                             setEmailInput(p.email ?? "");
                             setEmailRemindersEnabled(!!p.emailRemindersEnabled);
+                            setAnnualGoalKm(p.annualGoalKm ?? null);
+                            setAnnualGoalInput(p.annualGoalKm ? String(p.annualGoalKm) : "");
                         }
                     })
                     .catch(() => {});
@@ -377,6 +382,26 @@ export default function Home() {
             });
         } catch {
             setError("Error al actualizar los recordatorios");
+        }
+    };
+
+    const handleSaveGoal = async () => {
+        const km = Number(annualGoalInput);
+        if (!annualGoalInput || isNaN(km) || km <= 0) return;
+        try {
+            const res = await fetch("/api/profile", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ annualGoalKm: km }),
+            });
+            const data = await res.json();
+            if (data?.ok) {
+                setAnnualGoalKm(data.annualGoalKm ?? km);
+            } else {
+                setError(data?.error ?? "Error al guardar la meta");
+            }
+        } catch {
+            setError("Error al guardar la meta");
         }
     };
 
@@ -648,18 +673,47 @@ export default function Home() {
                                                             {proInsight}
                                                         </div>
                                                     )}
+                                                    <div>
+                                                        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1.5">{t.annualGoalTitle}</p>
+                                                        <div className="flex gap-2">
+                                                            <input
+                                                                type="number"
+                                                                value={annualGoalInput}
+                                                                onChange={(e) => setAnnualGoalInput(e.target.value)}
+                                                                placeholder={t.annualGoalPlaceholder}
+                                                                className="flex-1 px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-strava"
+                                                            />
+                                                            <button
+                                                                onClick={handleSaveGoal}
+                                                                className="px-3 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-neutral-200 transition-colors"
+                                                            >
+                                                                {t.annualGoalSave}
+                                                            </button>
+                                                        </div>
+                                                        {annualGoalKm && (
+                                                            <p className="text-[10px] text-neutral-500 mt-1.5">
+                                                                {annualGoalKm} km {t.annualGoalCurrent}
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </>
                                             ) : (
                                                 <>
                                                     <div className="flex items-center gap-2 mb-1">
-                                                        <Crown className="w-4 h-4 text-neutral-400" />
-                                                        <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-300">{t.proPanelTitle}</h3>
+                                                        <Crown className="w-4 h-4 text-strava" />
+                                                        <h3 className="text-sm font-bold uppercase tracking-widest text-strava">{t.proPanelTitle}</h3>
+                                                        <span className="ml-auto flex items-baseline gap-1">
+                                                            <span className="text-lg font-black text-white">{t.proPrice}</span>
+                                                        </span>
                                                     </div>
                                                     <p className="text-xs text-neutral-500 leading-relaxed">{t.proPanelSubtitle}</p>
-                                                    <div className="space-y-1.5 text-xs font-semibold text-neutral-400">
-                                                        <p className="flex items-center gap-2"><Sparkles className="w-3.5 h-3.5 text-strava" /> {t.proFeatureRoast}</p>
-                                                        <p className="flex items-center gap-2"><Thermometer className="w-3.5 h-3.5 text-strava" /> {t.proFeatureTrueEffort}</p>
-                                                        <p className="flex items-center gap-2"><Wand2 className="w-3.5 h-3.5 text-strava" /> {t.proFeatureCleanImage}</p>
+                                                    <div className="space-y-2 text-xs font-semibold text-neutral-300">
+                                                        <p className="flex items-center gap-2"><Sparkles className="w-3.5 h-3.5 text-strava shrink-0" /> {t.proFeatureSummary}</p>
+                                                        <p className="flex items-center gap-2"><Thermometer className="w-3.5 h-3.5 text-strava shrink-0" /> {t.proFeatureTrueEffortLong}</p>
+                                                        <p className="flex items-center gap-2"><Wand2 className="w-3.5 h-3.5 text-strava shrink-0" /> {t.proFeatureCleanImageLong}</p>
+                                                        <p className="flex items-center gap-2"><TrendingUp className="w-3.5 h-3.5 text-strava shrink-0" /> {t.proFeatureTrends}</p>
+                                                        <p className="flex items-center gap-2"><Target className="w-3.5 h-3.5 text-strava shrink-0" /> {t.proFeatureGoal}</p>
+                                                        <p className="flex items-center gap-2"><HeartPulse className="w-3.5 h-3.5 text-strava shrink-0" /> {t.proFeatureZones}</p>
                                                     </div>
                                                     <button
                                                         onClick={handleUpgrade}
@@ -669,6 +723,7 @@ export default function Home() {
                                                         {isUpgrading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crown className="w-4 h-4" />}
                                                         {isUpgrading ? t.proUpgrading : t.upgradeBtn}
                                                     </button>
+                                                    <p className="text-center text-[10px] text-neutral-600">{t.proCancelAnyTime}</p>
                                                 </>
                                             )}
                                         </div>

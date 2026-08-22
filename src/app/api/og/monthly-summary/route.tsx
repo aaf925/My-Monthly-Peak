@@ -21,6 +21,19 @@ export async function GET(req: NextRequest) {
     const activeDays = Number(searchParams.get("activeDays") ?? 0);
     const dominantSport = searchParams.get("sport") ?? "Run";
 
+    // Datos PRO opcionales (tendencias, meta, zonas) pasados por query param.
+    const trendParam = searchParams.get("trend"); // "Ene=154.2,Feb=120.5,..."
+    const trend = trendParam
+        ? trendParam.split(",").map((pair) => {
+              const [label, km] = pair.split("=");
+              return { label, distanceKm: Number(km) || 0 };
+          })
+        : undefined;
+    const goalPercent = searchParams.get("goalPercent");
+    const goalCurrentKm = searchParams.get("goalCurrentKm");
+    const goalKm = searchParams.get("goalKm");
+    const zonesParam = searchParams.get("zones"); // "12,28,35,18,7"
+
     // Plan resuelto en el SERVIDOR: nunca por query param (evita manipulación).
     let plan: "FREE" | "PRO" = "FREE";
     try {
@@ -56,6 +69,11 @@ export async function GET(req: NextRequest) {
                 activityCount={activityCount}
                 activeDays={activeDays}
                 dominantSport={dominantSport}
+                trend={trend}
+                goalPercent={goalPercent !== null ? Number(goalPercent) : null}
+                goalCurrentKm={goalCurrentKm !== null ? Number(goalCurrentKm) : null}
+                goalKm={goalKm !== null ? Number(goalKm) : null}
+                zones={zonesParam ? zonesParam.split(",").map(Number) : undefined}
             />
         ),
         {
