@@ -56,6 +56,15 @@ export const translations = {
         proPanelSubtitle: "AI Roast, True Effort por clima y exportación limpia por solo 5€/mes.",
         proUpgrading: "Redirigiendo a Stripe...",
 
+        // ─── Recordatorio mensual ───
+        remindersTitle: "Recordatorio mensual",
+        remindersSubtitle: "Recibe un email a fin de mes con tu resumen de actividades.",
+        remindersOn: "Activado",
+        remindersOff: "Desactivado",
+        emailPlaceholder: "tu@email.com",
+        emailSaved: "Email guardado",
+        saveEmail: "Guardar email",
+
         // month names
         monthsLong: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
@@ -116,6 +125,15 @@ export const translations = {
         proPanelTitle: "Unlock the PRO plan",
         proPanelSubtitle: "AI Roast, weather-adjusted True Effort and clean exports for only 5€/month.",
         proUpgrading: "Redirecting to Stripe...",
+
+        // ─── Recordatorio mensual ───
+        remindersTitle: "Monthly reminder",
+        remindersSubtitle: "Get an email at the end of each month with your activity summary.",
+        remindersOn: "Enabled",
+        remindersOff: "Disabled",
+        emailPlaceholder: "you@email.com",
+        emailSaved: "Email saved",
+        saveEmail: "Save email",
 
         // month names
         monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

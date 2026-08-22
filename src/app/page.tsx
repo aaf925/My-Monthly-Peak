@@ -13,7 +13,7 @@ import {
 } from "@/lib/strava";
 import { translations, Language } from "@/lib/translations";
 import { exportAsImage } from "@/lib/export";
-import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer } from "lucide-react";
+import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const DEMO_STATS: ActivityStats = {
@@ -82,6 +82,11 @@ export default function Home() {
     const [isGeneratingPro, setIsGeneratingPro] = useState(false);
     const [proInsight, setProInsight] = useState<string | null>(null);
 
+    const [userEmail, setUserEmail] = useState<string>("");
+    const [emailRemindersEnabled, setEmailRemindersEnabled] = useState(false);
+    const [emailInput, setEmailInput] = useState("");
+    const [isSavingEmail, setIsSavingEmail] = useState(false);
+
     const [targetYear, setTargetYear] = useState(new Date().getFullYear());
     const [targetMonth, setTargetMonth] = useState(new Date().getMonth());
     const [availableDates, setAvailableDates] = useState<Record<number, number[]> | null>(null);
@@ -128,6 +133,17 @@ export default function Home() {
                     .then((r) => r.json())
                     .then((me) => {
                         if (me?.ok && me.plan) setPlan(me.plan);
+                    })
+                    .catch(() => {});
+                // Cargar perfil (email + recordatorios)
+                fetch("/api/profile")
+                    .then((r) => r.json())
+                    .then((p) => {
+                        if (p?.ok) {
+                            setUserEmail(p.email ?? "");
+                            setEmailInput(p.email ?? "");
+                            setEmailRemindersEnabled(!!p.emailRemindersEnabled);
+                        }
                     })
                     .catch(() => {});
             } catch (err) {
@@ -250,8 +266,6 @@ export default function Home() {
     };
 
     const handleGeneratePro = async (kind: "roast" | "summary") => {
-        setIsGeneratingPro(true);
-        setProInsight(null);
         try {
             const res = await fetch("/api/pro/generate", {
                 method: "POST",
@@ -273,6 +287,43 @@ export default function Home() {
             setError("Error al generar contenido");
         } finally {
             setIsGeneratingPro(false);
+        }
+    };
+
+    const handleSaveEmail = async () => {
+        setIsSavingEmail(true);
+        try {
+            const res = await fetch("/api/profile", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailInput, emailRemindersEnabled }),
+            });
+            const data = await res.json();
+            if (data?.ok) {
+                setUserEmail(data.email ?? "");
+                setEmailInput(data.email ?? "");
+                setEmailRemindersEnabled(!!data.emailRemindersEnabled);
+            } else {
+                setError(data?.error ?? "Error al guardar el email");
+            }
+        } catch {
+            setError("Error al guardar el email");
+        } finally {
+            setIsSavingEmail(false);
+        }
+    };
+
+    const toggleReminders = async () => {
+        const next = !emailRemindersEnabled;
+        setEmailRemindersEnabled(next);
+        try {
+            await fetch("/api/profile", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ emailRemindersEnabled: next }),
+            });
+        } catch {
+            setError("Error al actualizar los recordatorios");
         }
     };
 
@@ -425,6 +476,50 @@ export default function Home() {
                                                 );
                                             })}
                                         </div>
+
+                                        {/* ─── RECORDATORIO MENSUAL ─── */}
+                                        {isAuthenticated && (
+                                            <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <Bell className="w-4 h-4 text-neutral-400" />
+                                                    <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-300">{t.remindersTitle}</h3>
+                                                </div>
+                                                <p className="text-xs text-neutral-500 leading-relaxed">{t.remindersSubtitle}</p>
+                                                {!userEmail && (
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            type="email"
+                                                            value={emailInput}
+                                                            onChange={(e) => setEmailInput(e.target.value)}
+                                                            placeholder={t.emailPlaceholder}
+                                                            className="flex-1 px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-strava"
+                                                        />
+                                                        <button
+                                                            onClick={handleSaveEmail}
+                                                            disabled={isSavingEmail || !emailInput}
+                                                            className="px-4 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-neutral-200 transition-colors disabled:opacity-40"
+                                                        >
+                                                            {isSavingEmail ? t.generating : t.saveEmail}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                {userEmail && (
+                                                    <div className="flex items-center justify-between p-2.5 rounded-xl border border-white/5 bg-white/5">
+                                                        <div className="min-w-0">
+                                                            <p className="text-xs font-bold text-white truncate">{userEmail}</p>
+                                                            <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-0.5">{t.emailSaved}</p>
+                                                        </div>
+                                                        <button
+                                                            onClick={toggleReminders}
+                                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-widest transition-colors ${emailRemindersEnabled ? "bg-strava/15 border-strava/40 text-strava" : "bg-neutral-950 border-neutral-800 text-neutral-500 hover:text-white"}`}
+                                                        >
+                                                            <Bell className="w-3.5 h-3.5" />
+                                                            {emailRemindersEnabled ? t.remindersOn : t.remindersOff}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {/* ─── PLAN PRO ─── */}
                                         <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
