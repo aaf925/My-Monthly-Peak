@@ -70,6 +70,15 @@ export const translations = {
         emailSaved: "Email guardado",
         saveEmail: "Guardar email",
 
+        // ─── Récords personales (FREE) ───
+        recordsTitle: "Récords personales",
+        recordsSubtitle: "Tu mejor mes en cada métrica.",
+        recordDistance: "Distancia",
+        recordElevation: "Desnivel",
+        recordActiveDays: "Días activos",
+        recordActivityCount: "Actividades",
+        recordOf: "de",
+
         // month names
         monthsLong: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
@@ -146,6 +155,15 @@ export const translations = {
         emailPlaceholder: "you@email.com",
         emailSaved: "Email saved",
         saveEmail: "Save email",
+
+        // ─── Récords personales (FREE) ───
+        recordsTitle: "Personal records",
+        recordsSubtitle: "Your best month in each metric.",
+        recordDistance: "Distance",
+        recordElevation: "Elevation",
+        recordActiveDays: "Active days",
+        recordActivityCount: "Activities",
+        recordOf: "of",
 
         // month names
         monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

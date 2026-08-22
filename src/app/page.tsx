@@ -13,7 +13,7 @@ import {
 } from "@/lib/strava";
 import { translations, Language } from "@/lib/translations";
 import { exportAsImage } from "@/lib/export";
-import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell } from "lucide-react";
+import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell, Medal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const DEMO_STATS: ActivityStats = {
@@ -88,6 +88,13 @@ export default function Home() {
     const [emailInput, setEmailInput] = useState("");
     const [isSavingEmail, setIsSavingEmail] = useState(false);
 
+    const [records, setRecords] = useState<{
+        distance: { month: string; year: number; value: string } | null;
+        elevation: { month: string; year: number; value: string } | null;
+        activeDays: { month: string; year: number; value: number } | null;
+        activityCount: { month: string; year: number; value: number } | null;
+    } | null>(null);
+
     const [targetYear, setTargetYear] = useState(new Date().getFullYear());
     const [targetMonth, setTargetMonth] = useState(new Date().getMonth());
     const [availableDates, setAvailableDates] = useState<Record<number, number[]> | null>(null);
@@ -145,6 +152,13 @@ export default function Home() {
                             setEmailInput(p.email ?? "");
                             setEmailRemindersEnabled(!!p.emailRemindersEnabled);
                         }
+                    })
+                    .catch(() => {});
+                // Cargar récords personales (FREE)
+                fetch("/api/records")
+                    .then((r) => r.json())
+                    .then((rec) => {
+                        if (rec?.ok && rec.records) setRecords(rec.records);
                     })
                     .catch(() => {});
             } catch (err) {
@@ -246,8 +260,41 @@ export default function Home() {
 
     const handleExport = async () => {
         setIsExporting(true);
-        await exportAsImage("recap-card", `Story_Strava_${stats.year}_${stats.monthName}`);
-        setIsExporting(false);
+        try {
+            // Exportación server-side con @vercel/og: FREE → marca de agua, PRO → limpia.
+            const params = new URLSearchParams({
+                distance: String(stats.totalDistance),
+                elevation: String(stats.totalElevation),
+                time: String(stats.totalTime),
+                month: String(stats.monthIndex),
+                year: String(stats.year),
+                name: isAuthenticated ? tokenData?.athlete?.firstname ?? "Atleta" : "DemoAthlete",
+                activities: String(stats.activityCount),
+                activeDays: String(stats.activeDaysCount),
+                sport: stats.dominantSport,
+                lang,
+            });
+            const res = await fetch(`/api/og/monthly-summary?${params.toString()}`, {
+                credentials: "include",
+            });
+            if (!res.ok) throw new Error(`OG ${res.status}`);
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `Story_Strava_${stats.year}_${stats.monthIndex + 1}.png`;
+            link.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error("Export server-side falló, usando fallback local:", err);
+            try {
+                await exportAsImage("recap-card", `Story_Strava_${stats.year}_${stats.monthName}`);
+            } catch (err2) {
+                alert("Hubo un error al exportar. Inténtalo de nuevo.");
+            }
+        } finally {
+            setIsExporting(false);
+        }
     };
 
     const handleUpgrade = async () => {
@@ -524,6 +571,37 @@ export default function Home() {
                                                         </button>
                                                     </div>
                                                 )}
+                                            </div>
+                                        )}
+
+                                        {/* ─── RÉCORDS PERSONALES (FREE) ─── */}
+                                        {records && (
+                                            <div className="mt-4 pt-4 border-t border-white/5 space-y-2">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <Medal className="w-4 h-4 text-yellow-500" />
+                                                    <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-300">{t.recordsTitle}</h3>
+                                                </div>
+                                                <p className="text-xs text-neutral-500 mb-2">{t.recordsSubtitle}</p>
+                                                {([
+                                                    ["distance", t.recordDistance, records.distance?.value],
+                                                    ["elevation", t.recordElevation, records.elevation?.value],
+                                                    ["activeDays", t.recordActiveDays, records.activeDays ? String(records.activeDays.value) : null],
+                                                    ["activityCount", t.recordActivityCount, records.activityCount ? String(records.activityCount.value) : null],
+                                                ] as const).map(([key, label, value]) => {
+                                                    const rec = records[key];
+                                                    if (!rec || !value) return null;
+                                                    return (
+                                                        <div key={key} className="flex items-center justify-between p-2.5 rounded-xl border border-white/5 bg-white/5">
+                                                            <div>
+                                                                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{label}</p>
+                                                                <p className="text-xs font-bold text-white">{value}</p>
+                                                            </div>
+                                                            <span className="text-[10px] font-semibold text-yellow-500">
+                                                                {rec.month} {rec.year}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                         )}
 
