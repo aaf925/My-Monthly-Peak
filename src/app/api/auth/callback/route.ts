@@ -44,19 +44,11 @@ export async function GET(req: NextRequest) {
 
         const data = await res.json();
 
-        // El email NO viene en la respuesta del token: hay que pedirlo al
-        // endpoint /athlete (requiere scope profile:read_all).
-        let athleteDetail = data.athlete;
-        try {
-            const profileRes = await fetch("https://www.strava.com/api/v3/athlete", {
-                headers: { Authorization: `Bearer ${data.access_token}` },
-            });
-            if (profileRes.ok) {
-                athleteDetail = await profileRes.json();
-            }
-        } catch (err) {
-            console.error("No se pudo obtener el perfil completo de Strava:", err);
-        }
+        // El email NO lo devuelve la API de Strava (limitación de Strava).
+        // Lo rellenamos desde Stripe en el webhook al pagar. Aquí solo usamos
+        // los datos del token; si Strava algún día lo entrega en /athlete, se
+        // capturaría aquí, pero por ahora no está disponible.
+        const athleteDetail = data.athlete;
 
         // Redirigir al dashboard
         const response = NextResponse.redirect(new URL("/", req.url));
@@ -74,7 +66,7 @@ export async function GET(req: NextRequest) {
                     name: data.athlete.firstname
                         ? `${data.athlete.firstname} ${data.athlete.lastname ?? ""}`.trim()
                         : null,
-                    email: athleteDetail.email ?? null,
+                    email: null,
                     avatarUrl: data.athlete.profile_medium ?? athleteDetail.profile_medium ?? null,
                     plan: "FREE",
                 },
@@ -85,7 +77,6 @@ export async function GET(req: NextRequest) {
                     name: data.athlete.firstname
                         ? `${data.athlete.firstname} ${data.athlete.lastname ?? ""}`.trim()
                         : undefined,
-                    email: athleteDetail.email ?? undefined,
                     avatarUrl: data.athlete.profile_medium ?? athleteDetail.profile_medium ?? undefined,
                 },
             });

@@ -58,6 +58,8 @@ export async function POST(req: NextRequest) {
                             plan: "PRO",
                             stripeCustomerId: String(session.customer),
                             stripeSubscriptionId: subscriptionId || user.stripeSubscriptionId,
+                            // Stripe guarda el email real del cliente al pagar
+                            email: session.customer_details?.email ?? undefined,
                         },
                     });
                 }
