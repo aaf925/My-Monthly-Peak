@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
             year?: number;
             month?: number; // 0-11
             kind?: InsightKind;
+            type?: string; // tipo de actividad: "Run", "Ride", "Swim", etc.
         };
 
         const year = body.year ?? new Date().getFullYear();
@@ -34,7 +35,27 @@ export async function POST(req: NextRequest) {
         if (!accessToken) throw new ProRequiredError("Sin token de Strava", 401);
 
         // 1. Traer actividades del mes desde Strava
-        const activities = await fetchMonthlyActivities(accessToken, year, month);
+        let activities = await fetchMonthlyActivities(accessToken, year, month);
+
+        // 1b. Filtrar por tipo de actividad si se especifica (Run/Ride/Swim/...).
+        //     No mezclar disciplinas: si no se indica tipo, usamos el dominante.
+        let selectedType = body.type;
+        if (!selectedType && activities.length > 0) {
+            const counts: Record<string, number> = {};
+            for (const a of activities) counts[a.type] = (counts[a.type] ?? 0) + 1;
+            selectedType = Object.entries(counts).sort((x, y) => y[1] - x[1])[0][0];
+        }
+        if (selectedType) {
+            activities = activities.filter((a) => a.type === selectedType);
+        }
+        if (activities.length === 0) {
+            return NextResponse.json({
+                ok: true,
+                trueEffortPace: null,
+                insight: "No hay actividades de este tipo en el mes seleccionado.",
+                cachedActivities: 0,
+            });
+        }
 
         // 2. Cachearlas en CachedActivity (upsert por stravaActivityId)
         const cachedIds: string[] = [];
@@ -103,11 +124,17 @@ export async function POST(req: NextRequest) {
             { distance: 0, elevation: 0, speed: 0, hr: 0, hrCount: 0 }
         );
 
-        const kind = body.kind ?? "roast";
+        const kind = body.kind ?? "summary";
         const avgSpeedMps = totals.speed / Math.max(activities.length, 1);
-        // average_speed de Strava viene en m/s → ritmo en min/km: (1000/speed)/60
-        const avgPaceMinKm =
-            avgSpeedMps > 0 ? Math.round(((1000 / avgSpeedMps) / 60) * 100) / 100 : null;
+        // average_speed de Strava viene en m/s → ritmo en seg/km: 1000/speed
+        const avgPaceSecPerKm = avgSpeedMps > 0 ? 1000 / avgSpeedMps : null;
+        // Formato "MM:SS" (ej. 5:42 min/km)
+        const formatPace = (sec: number | null) => {
+            if (!sec) return null;
+            const m = Math.floor(sec / 60);
+            const s = Math.round(sec % 60);
+            return `${m}:${s.toString().padStart(2, "0")}`;
+        };
         const insight = await generateInsight({
             kind,
             lang: "es",
@@ -120,14 +147,14 @@ export async function POST(req: NextRequest) {
             ).size,
             distanceKm: Math.round((totals.distance / 1000) * 10) / 10,
             elevationM: Math.round(totals.elevation),
-            avgPaceMinKm,
+            avgPace: formatPace(avgPaceSecPerKm),
             avgHeartrate: totals.hrCount ? Math.round(totals.hr / totals.hrCount) : null,
-            dominantSport: "Run",
+            dominantSport: selectedType ?? "Run",
             hasTrueEffort: trueEffortPace !== null,
         });
 
         // Guardar roastText en las actividades cacheadas
-        if (kind === "roast") {
+        if (kind === "summary") {
             await prisma.cachedActivity.updateMany({
                 where: { id: { in: cachedIds } },
                 data: { roastText: insight },

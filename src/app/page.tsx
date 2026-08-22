@@ -81,6 +81,7 @@ export default function Home() {
     const [isUpgrading, setIsUpgrading] = useState(false);
     const [isGeneratingPro, setIsGeneratingPro] = useState(false);
     const [proInsight, setProInsight] = useState<string | null>(null);
+    const [selectedSport, setSelectedSport] = useState<string>("all");
 
     const [userEmail, setUserEmail] = useState<string>("");
     const [emailRemindersEnabled, setEmailRemindersEnabled] = useState(false);
@@ -270,7 +271,12 @@ export default function Home() {
             const res = await fetch("/api/pro/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ year: stats.year, month: stats.monthIndex, kind }),
+                body: JSON.stringify({
+                    year: stats.year,
+                    month: stats.monthIndex,
+                    kind,
+                    type: selectedSport === "all" ? undefined : selectedSport,
+                }),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -530,18 +536,31 @@ export default function Home() {
                                                         <h3 className="text-sm font-bold uppercase tracking-widest text-strava">{t.proBadge}</h3>
                                                         <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-auto">{t.managePlanBtn}</span>
                                                     </div>
-                                                    <button
-                                                        onClick={() => handleGeneratePro("roast")}
-                                                        disabled={isGeneratingPro}
-                                                        className="w-full flex items-center justify-center gap-2 p-3 bg-strava text-white font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
-                                                    >
-                                                        {isGeneratingPro ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-                                                        {isGeneratingPro ? t.generating : t.generateRoast}
-                                                    </button>
+                                                    <div>
+                                                        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1.5">{t.summaryFor}</p>
+                                                        <div className="flex flex-wrap gap-1.5">
+                                                            {([
+                                                                ["all", t.sportAll],
+                                                                ["Run", t.sportRun],
+                                                                ["Ride", t.sportRide],
+                                                                ["Swim", t.sportSwim],
+                                                                ["Walk", t.sportWalk],
+                                                                ["Hike", t.sportHike],
+                                                            ] as const).map(([value, label]) => (
+                                                                <button
+                                                                    key={value}
+                                                                    onClick={() => setSelectedSport(value)}
+                                                                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors border ${selectedSport === value ? "bg-white text-black border-white" : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:text-white"}`}
+                                                                >
+                                                                    {label}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
                                                     <button
                                                         onClick={() => handleGeneratePro("summary")}
                                                         disabled={isGeneratingPro}
-                                                        className="w-full flex items-center justify-center gap-2 p-3 bg-neutral-900 text-white font-bold rounded-xl border border-white/10 hover:bg-neutral-800 transition-colors disabled:opacity-50"
+                                                        className="w-full flex items-center justify-center gap-2 p-3 bg-strava text-white font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
                                                     >
                                                         {isGeneratingPro ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                                                         {isGeneratingPro ? t.generating : t.generateSummary}

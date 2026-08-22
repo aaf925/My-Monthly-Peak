@@ -1,11 +1,11 @@
 import OpenAI from "openai";
 
 /**
- * IA — Generación de roast y resumen mensual vía OpenRouter (gpt-4o-mini).
+ * IA — Generación del resumen mensual vía OpenRouter (gpt-4o-mini).
  * OpenRouter es compatible con la API de OpenAI, solo cambia baseURL y clave.
  */
 
-export type InsightKind = "roast" | "summary";
+export type InsightKind = "summary";
 
 export interface MonthlyInsightInput {
     kind: InsightKind;
@@ -17,7 +17,7 @@ export interface MonthlyInsightInput {
     activeDays: number;
     distanceKm: number;
     elevationM: number;
-    avgPaceMinKm: number | null;
+    avgPace: string | null; // formato "MM:SS" (min/km)
     avgHeartrate: number | null;
     dominantSport: string;
     hasTrueEffort: boolean;
@@ -37,23 +37,22 @@ function getOpenAI(): OpenAI {
     });
 }
 
-function buildSystemPrompt(lang: InsightKind extends never ? never : "es" | "en"): string {
+function buildSystemPrompt(lang: "es" | "en"): string {
     return lang === "es"
-        ? "Eres 'My Monthly Peak', un entrenador sarcástico pero motivador. Habla en español. Máximo 2 frases. Usa emojis con moderación. Menciona números reales. Nunca inventes datos."
-        : "You are 'My Monthly Peak', a sarcastic but motivating coach. Speak in English. Max 2 sentences. Use emojis sparingly. Mention real numbers. Never invent data.";
+        ? "Eres 'My Monthly Peak', un entrenador motivador y analítico. Habla en español. Máximo 3 frases. Usa emojis con moderación. Menciona números reales. El ritmo siempre en formato MM:SS min/km (por ejemplo 5:42 min/km). Nunca inventes datos."
+        : "You are 'My Monthly Peak', a motivating and analytical coach. Speak in English. Max 3 sentences. Use emojis sparingly. Mention real numbers. Always format pace as MM:SS min/km (e.g. 5:42 min/km). Never invent data.";
 }
 
 function buildUserPrompt(input: MonthlyInsightInput): string {
-    const { kind } = input;
     const base = [
         `Mes: ${input.monthName} ${input.year}`,
         `Usuario: ${input.userName}`,
         `Actividades: ${input.activityCount} en ${input.activeDays} días activos`,
+        `Tipo de actividad: ${input.dominantSport}`,
         `Distancia: ${input.distanceKm} km`,
         `Desnivel: ${input.elevationM} m`,
-        `Ritmo medio: ${input.avgPaceMinKm ? `${input.avgPaceMinKm} min/km` : "n/d"}`,
+        `Ritmo medio: ${input.avgPace ? `${input.avgPace} min/km` : "n/d"}`,
         `Pulsaciones medias: ${input.avgHeartrate ? `${input.avgHeartrate} bpm` : "n/d"}`,
-        `Deporte dominante: ${input.dominantSport}`,
     ];
 
     if (input.recordsBroken?.length) {
@@ -68,10 +67,7 @@ function buildUserPrompt(input: MonthlyInsightInput): string {
         base.push("Nota: el usuario usa True Effort (ritmos ajustados por clima).");
     }
 
-    if (kind === "roast") {
-        return `Vacila (con cariño) su rendimiento del mes. Datos:\n${base.join("\n")}`;
-    }
-    return `Escribe un resumen positivo y motivador de su evolución. Destaca logros y mejoras. Datos:\n${base.join("\n")}`;
+    return `Escribe un resumen positivo y motivador de su evolución, centrado SOLO en ${input.dominantSport}. Destaca logros y mejoras. Datos:\n${base.join("\n")}`;
 }
 
 export async function generateInsight(input: MonthlyInsightInput): Promise<string> {
@@ -83,8 +79,8 @@ export async function generateInsight(input: MonthlyInsightInput): Promise<strin
             { role: "system", content: buildSystemPrompt(input.lang) },
             { role: "user", content: buildUserPrompt(input) },
         ],
-        temperature: 0.8,
-        max_tokens: 120,
+        temperature: 0.7,
+        max_tokens: 150,
     });
 
     const text = completion.choices[0]?.message?.content?.trim();
