@@ -44,6 +44,20 @@ export async function GET(req: NextRequest) {
 
         const data = await res.json();
 
+        // El email NO viene en la respuesta del token: hay que pedirlo al
+        // endpoint /athlete (requiere scope profile:read_all).
+        let athleteDetail = data.athlete;
+        try {
+            const profileRes = await fetch("https://www.strava.com/api/v3/athlete", {
+                headers: { Authorization: `Bearer ${data.access_token}` },
+            });
+            if (profileRes.ok) {
+                athleteDetail = await profileRes.json();
+            }
+        } catch (err) {
+            console.error("No se pudo obtener el perfil completo de Strava:", err);
+        }
+
         // Redirigir al dashboard
         const response = NextResponse.redirect(new URL("/", req.url));
 
@@ -60,8 +74,8 @@ export async function GET(req: NextRequest) {
                     name: data.athlete.firstname
                         ? `${data.athlete.firstname} ${data.athlete.lastname ?? ""}`.trim()
                         : null,
-                    email: data.athlete.email ?? null,
-                    avatarUrl: data.athlete.profile_medium ?? null,
+                    email: athleteDetail.email ?? null,
+                    avatarUrl: data.athlete.profile_medium ?? athleteDetail.profile_medium ?? null,
                     plan: "FREE",
                 },
                 update: {
@@ -71,8 +85,8 @@ export async function GET(req: NextRequest) {
                     name: data.athlete.firstname
                         ? `${data.athlete.firstname} ${data.athlete.lastname ?? ""}`.trim()
                         : undefined,
-                    email: data.athlete.email ?? undefined,
-                    avatarUrl: data.athlete.profile_medium ?? undefined,
+                    email: athleteDetail.email ?? undefined,
+                    avatarUrl: data.athlete.profile_medium ?? athleteDetail.profile_medium ?? undefined,
                 },
             });
         } catch (err) {
