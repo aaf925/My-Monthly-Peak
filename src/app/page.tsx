@@ -13,7 +13,7 @@ import {
 } from "@/lib/strava";
 import { translations, Language } from "@/lib/translations";
 import { exportAsImage } from "@/lib/export";
-import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays } from "lucide-react";
+import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const DEMO_STATS: ActivityStats = {
@@ -77,6 +77,11 @@ export default function Home() {
     const [error, setError] = useState<string | null>(null);
     const [isExporting, setIsExporting] = useState(false);
 
+    const [plan, setPlan] = useState<"FREE" | "PRO">("FREE");
+    const [isUpgrading, setIsUpgrading] = useState(false);
+    const [isGeneratingPro, setIsGeneratingPro] = useState(false);
+    const [proInsight, setProInsight] = useState<string | null>(null);
+
     const [targetYear, setTargetYear] = useState(new Date().getFullYear());
     const [targetMonth, setTargetMonth] = useState(new Date().getMonth());
     const [availableDates, setAvailableDates] = useState<Record<number, number[]> | null>(null);
@@ -118,6 +123,13 @@ export default function Home() {
                 // Strava session objects are URL-encoded strings in cookies
                 const data = JSON.parse(decodeURIComponent(cookieSession));
                 startWithTokenData(data);
+                // Cargar el plan del usuario desde el servidor
+                fetch("/api/me")
+                    .then((r) => r.json())
+                    .then((me) => {
+                        if (me?.ok && me.plan) setPlan(me.plan);
+                    })
+                    .catch(() => {});
             } catch (err) {
                 console.error("No se pudo decodificar la cookie strava_session:", err);
             }
@@ -221,6 +233,49 @@ export default function Home() {
         setIsExporting(false);
     };
 
+    const handleUpgrade = async () => {
+        setIsUpgrading(true);
+        try {
+            const res = await fetch("/api/stripe/checkout", { method: "POST" });
+            const data = await res.json();
+            if (data?.url) {
+                window.location.href = data.url;
+            } else {
+                setError(data?.error ?? "Error al iniciar el pago");
+            }
+        } catch {
+            setError("Error al iniciar el pago");
+            setIsUpgrading(false);
+        }
+    };
+
+    const handleGeneratePro = async (kind: "roast" | "summary") => {
+        setIsGeneratingPro(true);
+        setProInsight(null);
+        try {
+            const res = await fetch("/api/pro/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ year: stats.year, month: stats.monthIndex, kind }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setError(data?.error ?? t.proOnly);
+                // Si el pago ya se procesó pero la cookie no, reintentar cargar plan
+                if (data?.error?.includes("PRO")) {
+                    const me = await fetch("/api/me").then((r) => r.json());
+                    if (me?.plan === "PRO") setPlan("PRO");
+                }
+            } else {
+                setProInsight(data.insight ?? "");
+            }
+        } catch {
+            setError("Error al generar contenido");
+        } finally {
+            setIsGeneratingPro(false);
+        }
+    };
+
     const isAuthenticated = appState === "authenticated";
     const isLoading = appState === "loading";
     const isDemoOrAuth = appState === "demo" || isAuthenticated;
@@ -249,8 +304,13 @@ export default function Home() {
                             >
                                 {lang === 'es' ? 'EN' : 'ES'}
                             </button>
+                            {isAuthenticated && (
+                                <span className={`px-3 py-1 text-xs font-black rounded-lg uppercase flex items-center gap-1.5 ${plan === "PRO" ? "bg-strava/15 text-strava border border-strava/40" : "bg-white/5 text-neutral-400 border border-white/10"}`}>
+                                    {plan === "PRO" ? <Crown className="w-3.5 h-3.5" /> : <Zap className="w-3.5 h-3.5" />}
+                                    {plan === "PRO" ? t.proBadge : t.freeBadge}
+                                </span>
+                            )}
                         </div>
-
                         <h1 className="text-5xl md:text-6xl font-black mb-4 tracking-tight leading-tight">
                             {t.title1}<br />
                             <span className="text-strava underline decoration-strava/30 underline-offset-8">{t.title2}</span>
@@ -364,6 +424,61 @@ export default function Home() {
                                                     </button>
                                                 );
                                             })}
+                                        </div>
+
+                                        {/* ─── PLAN PRO ─── */}
+                                        <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                                            {plan === "PRO" ? (
+                                                <>
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <Crown className="w-4 h-4 text-strava" />
+                                                        <h3 className="text-sm font-bold uppercase tracking-widest text-strava">{t.proBadge}</h3>
+                                                        <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-auto">{t.managePlanBtn}</span>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleGeneratePro("roast")}
+                                                        disabled={isGeneratingPro}
+                                                        className="w-full flex items-center justify-center gap-2 p-3 bg-strava text-white font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                                                    >
+                                                        {isGeneratingPro ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                                                        {isGeneratingPro ? t.generating : t.generateRoast}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleGeneratePro("summary")}
+                                                        disabled={isGeneratingPro}
+                                                        className="w-full flex items-center justify-center gap-2 p-3 bg-neutral-900 text-white font-bold rounded-xl border border-white/10 hover:bg-neutral-800 transition-colors disabled:opacity-50"
+                                                    >
+                                                        {isGeneratingPro ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                                                        {isGeneratingPro ? t.generating : t.generateSummary}
+                                                    </button>
+                                                    {proInsight && (
+                                                        <div className="p-3 bg-white/5 border border-white/10 rounded-xl text-sm text-neutral-200 leading-relaxed">
+                                                            {proInsight}
+                                                        </div>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <Crown className="w-4 h-4 text-neutral-400" />
+                                                        <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-300">{t.proPanelTitle}</h3>
+                                                    </div>
+                                                    <p className="text-xs text-neutral-500 leading-relaxed">{t.proPanelSubtitle}</p>
+                                                    <div className="space-y-1.5 text-xs font-semibold text-neutral-400">
+                                                        <p className="flex items-center gap-2"><Sparkles className="w-3.5 h-3.5 text-strava" /> {t.proFeatureRoast}</p>
+                                                        <p className="flex items-center gap-2"><Thermometer className="w-3.5 h-3.5 text-strava" /> {t.proFeatureTrueEffort}</p>
+                                                        <p className="flex items-center gap-2"><Wand2 className="w-3.5 h-3.5 text-strava" /> {t.proFeatureCleanImage}</p>
+                                                    </div>
+                                                    <button
+                                                        onClick={handleUpgrade}
+                                                        disabled={isUpgrading}
+                                                        className="w-full flex items-center justify-center gap-2 p-3 bg-strava text-white font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                                                    >
+                                                        {isUpgrading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crown className="w-4 h-4" />}
+                                                        {isUpgrading ? t.proUpgrading : t.upgradeBtn}
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </motion.div>

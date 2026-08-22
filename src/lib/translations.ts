@@ -40,6 +40,22 @@ export const translations = {
         placeholder1: "Compara tu progreso.",
         placeholder2: "Conecta tu Strava.",
 
+        // ─── Plan Pro ───
+        proBadge: "PRO",
+        freeBadge: "GRATIS",
+        upgradeBtn: "Hazte PRO",
+        managePlanBtn: "Plan PRO activo",
+        proFeatureRoast: "AI Roast del mes",
+        proFeatureTrueEffort: "True Effort (clima)",
+        proFeatureCleanImage: "Imagen sin marca de agua",
+        generateRoast: "Generar AI Roast",
+        generateSummary: "Generar resumen IA",
+        generating: "Generando...",
+        proOnly: "Esta función requiere el plan PRO",
+        proPanelTitle: "Desbloquea el plan PRO",
+        proPanelSubtitle: "AI Roast, True Effort por clima y exportación limpia por solo 5€/mes.",
+        proUpgrading: "Redirigiendo a Stripe...",
+
         // month names
         monthsLong: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
@@ -84,6 +100,22 @@ export const translations = {
         },
         placeholder1: "Track your progress.",
         placeholder2: "Connect your Strava.",
+
+        // ─── Plan Pro ───
+        proBadge: "PRO",
+        freeBadge: "FREE",
+        upgradeBtn: "Go PRO",
+        managePlanBtn: "PRO plan active",
+        proFeatureRoast: "Monthly AI Roast",
+        proFeatureTrueEffort: "True Effort (weather)",
+        proFeatureCleanImage: "Clean image (no watermark)",
+        generateRoast: "Generate AI Roast",
+        generateSummary: "Generate AI summary",
+        generating: "Generating...",
+        proOnly: "This feature requires the PRO plan",
+        proPanelTitle: "Unlock the PRO plan",
+        proPanelSubtitle: "AI Roast, weather-adjusted True Effort and clean exports for only 5€/month.",
+        proUpgrading: "Redirecting to Stripe...",
 
         // month names
         monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
