@@ -40,10 +40,10 @@ export async function POST(req: NextRequest) {
         const cachedIds: string[] = [];
         for (const act of activities) {
             const saved = await prisma.cachedActivity.upsert({
-                where: { stravaActivityId: act.id },
+                where: { stravaActivityId: BigInt(act.id) },
                 create: {
                     userId: user.id,
-                    stravaActivityId: act.id,
+                    stravaActivityId: BigInt(act.id),
                     name: act.name ?? "Actividad",
                     type: act.type ?? "Run",
                     distance: act.distance ?? 0,
@@ -104,7 +104,10 @@ export async function POST(req: NextRequest) {
         );
 
         const kind = body.kind ?? "roast";
-        const avgPaceMinKm = totals.speed / Math.max(activities.length, 1);
+        const avgSpeedMps = totals.speed / Math.max(activities.length, 1);
+        // average_speed de Strava viene en m/s → ritmo en min/km: (1000/speed)/60
+        const avgPaceMinKm =
+            avgSpeedMps > 0 ? Math.round(((1000 / avgSpeedMps) / 60) * 100) / 100 : null;
         const insight = await generateInsight({
             kind,
             lang: "es",
@@ -117,7 +120,7 @@ export async function POST(req: NextRequest) {
             ).size,
             distanceKm: Math.round((totals.distance / 1000) * 10) / 10,
             elevationM: Math.round(totals.elevation),
-            avgPaceMinKm: avgPaceMinKm > 0 ? Math.round((1000 / avgPaceMinKm) * 100) / 100 : null,
+            avgPaceMinKm,
             avgHeartrate: totals.hrCount ? Math.round(totals.hr / totals.hrCount) : null,
             dominantSport: "Run",
             hasTrueEffort: trueEffortPace !== null,
