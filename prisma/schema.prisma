@@ -1,0 +1,66 @@
+generator client {
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+enum Plan {
+    FREE
+    PRO
+}
+
+model User {
+    id                   String   @id @default(cuid())
+    stravaAthleteId      Int      @unique
+    stravaAccessToken    String?
+    stravaRefreshToken   String?
+    stravaTokenExpiresAt DateTime?
+
+    stripeCustomerId     String?  @unique
+    stripeSubscriptionId String?  @unique
+    plan                 Plan     @default(FREE)
+
+    name        String?
+    email       String?
+    avatarUrl   String?
+
+    createdAt            DateTime @default(now())
+    updatedAt            DateTime @updatedAt
+
+    cachedActivities     CachedActivity[]
+
+    @@index([plan])
+}
+
+model CachedActivity {
+    id                   String   @id @default(cuid())
+    userId               String
+    stravaActivityId     Int      @unique
+
+    name                 String
+    type                 String
+    distance             Float
+    movingTime           Int
+    totalElevationGain   Float
+    averageSpeed         Float
+    startDate            DateTime
+    startDateLocal       DateTime?
+    summaryPolyline      String?
+    startLat             Float?
+    startLng             Float?
+    averageHeartrate     Float?
+
+    // ─── Campos Pro (nullable hasta que el usuario sea PRO) ───
+    trueEffortPace       Float?
+    roastText            String?
+
+    createdAt            DateTime @default(now())
+    updatedAt            DateTime @updatedAt
+
+    user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId, startDateLocal])
+}

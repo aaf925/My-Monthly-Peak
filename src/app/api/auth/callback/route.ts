@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getPrisma } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
     const url = new URL(req.url);
@@ -45,6 +46,38 @@ export async function GET(req: NextRequest) {
 
         // Redirigir al dashboard
         const response = NextResponse.redirect(new URL("/", req.url));
+
+        // Persistir/actualizar el User en PostgreSQL (plan FREE por defecto).
+        try {
+            const prisma = getPrisma();
+            await prisma.user.upsert({
+                where: { stravaAthleteId: data.athlete.id },
+                create: {
+                    stravaAthleteId: data.athlete.id,
+                    stravaAccessToken: data.access_token,
+                    stravaRefreshToken: data.refresh_token,
+                    stravaTokenExpiresAt: new Date(data.expires_at * 1000),
+                    name: data.athlete.firstname
+                        ? `${data.athlete.firstname} ${data.athlete.lastname ?? ""}`.trim()
+                        : null,
+                    email: data.athlete.email ?? null,
+                    avatarUrl: data.athlete.profile_medium ?? null,
+                    plan: "FREE",
+                },
+                update: {
+                    stravaAccessToken: data.access_token,
+                    stravaRefreshToken: data.refresh_token,
+                    stravaTokenExpiresAt: new Date(data.expires_at * 1000),
+                    name: data.athlete.firstname
+                        ? `${data.athlete.firstname} ${data.athlete.lastname ?? ""}`.trim()
+                        : undefined,
+                    email: data.athlete.email ?? undefined,
+                    avatarUrl: data.athlete.profile_medium ?? undefined,
+                },
+            });
+        } catch (err) {
+            console.error("No se pudo persistir el usuario en DB:", err);
+        }
 
         // Guardar la sesión en cookies para evitar base de datos.
         // Se pone httpOnly en false para poder leerlo desde page.tsx
