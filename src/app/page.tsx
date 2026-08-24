@@ -359,6 +359,8 @@ export default function Home() {
     };
 
     const handleGeneratePro = async (kind: "roast" | "summary") => {
+        setIsGeneratingPro(true);
+        setProInsight(null);
         try {
             const res = await fetch("/api/pro/generate", {
                 method: "POST",
