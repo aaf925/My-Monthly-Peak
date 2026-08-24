@@ -93,6 +93,11 @@ export const translations = {
         annualGoalSave: "Guardar meta",
         annualGoalSaved: "Meta guardada",
         annualGoalCurrent: "km este año",
+        annualGoalEdit: "Editar",
+        annualGoalDone: "Listo",
+        progressLabel: "Progreso",
+        goalReached: "¡Meta conseguida!",
+        generateBtnLabel: "Crear mi resumen",
 
         // month names
         monthsLong: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -194,6 +199,11 @@ export const translations = {
         annualGoalSave: "Save goal",
         annualGoalSaved: "Goal saved",
         annualGoalCurrent: "km this year",
+        annualGoalEdit: "Edit",
+        annualGoalDone: "Done",
+        progressLabel: "Progress",
+        goalReached: "Goal achieved!",
+        generateBtnLabel: "Create my summary",
 
         // month names
         monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

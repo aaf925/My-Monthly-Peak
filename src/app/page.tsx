@@ -13,7 +13,7 @@ import {
 } from "@/lib/strava";
 import { translations, Language } from "@/lib/translations";
 import { exportAsImage } from "@/lib/export";
-import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell, Medal, TrendingUp, Target, HeartPulse } from "lucide-react";
+import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell, Medal, TrendingUp, Target, HeartPulse, Footprints, Bike, Waves, Mountain } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const DEMO_STATS: ActivityStats = {
@@ -97,6 +97,8 @@ export default function Home() {
 
     const [annualGoalKm, setAnnualGoalKm] = useState<number | null>(null);
     const [annualGoalInput, setAnnualGoalInput] = useState("");
+    const [annualGoalProgress, setAnnualGoalProgress] = useState(0);
+    const [yearDistanceKm, setYearDistanceKm] = useState<number | null>(null);
 
     const [targetYear, setTargetYear] = useState(new Date().getFullYear());
     const [targetMonth, setTargetMonth] = useState(new Date().getMonth());
@@ -163,7 +165,10 @@ export default function Home() {
                 fetch("/api/records")
                     .then((r) => r.json())
                     .then((rec) => {
-                        if (rec?.ok && rec.records) setRecords(rec.records);
+                        if (rec?.ok) {
+                            if (rec.records) setRecords(rec.records);
+                            if (typeof rec.yearTotalKm === "number") setYearDistanceKm(rec.yearTotalKm);
+                        }
                     })
                     .catch(() => {});
             } catch (err) {
@@ -439,6 +444,14 @@ export default function Home() {
         }
     };
 
+    useEffect(() => {
+        if (annualGoalKm && yearDistanceKm !== null) {
+            setAnnualGoalProgress(Math.round((yearDistanceKm / annualGoalKm) * 100));
+        } else {
+            setAnnualGoalProgress(0);
+        }
+    }, [annualGoalKm, yearDistanceKm]);
+
     const isAuthenticated = appState === "authenticated";
     const isLoading = appState === "loading";
     const isDemoOrAuth = appState === "demo" || isAuthenticated;
@@ -675,20 +688,21 @@ export default function Home() {
                                                     </div>
                                                     <div>
                                                         <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1.5">{t.summaryFor}</p>
-                                                        <div className="flex flex-wrap gap-1.5">
+                                                        <div className="grid grid-cols-3 gap-1.5">
                                                             {([
-                                                                ["all", t.sportAll],
-                                                                ["Run", t.sportRun],
-                                                                ["Ride", t.sportRide],
-                                                                ["Swim", t.sportSwim],
-                                                                ["Walk", t.sportWalk],
-                                                                ["Hike", t.sportHike],
-                                                            ] as const).map(([value, label]) => (
+                                                                ["all", t.sportAll, CalendarDays],
+                                                                ["Run", t.sportRun, Footprints],
+                                                                ["Ride", t.sportRide, Bike],
+                                                                ["Swim", t.sportSwim, Waves],
+                                                                ["Walk", t.sportWalk, Footprints],
+                                                                ["Hike", t.sportHike, Mountain],
+                                                            ] as const).map(([value, label, Icon]) => (
                                                                 <button
                                                                     key={value}
                                                                     onClick={() => setSelectedSport(value)}
-                                                                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors border ${selectedSport === value ? "bg-white text-black border-white" : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:text-white"}`}
+                                                                    className={`flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all border ${selectedSport === value ? "bg-white text-black border-white shadow-lg shadow-white/10" : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:text-white hover:border-neutral-600"}`}
                                                                 >
+                                                                    <Icon className="w-3.5 h-3.5" />
                                                                     {label}
                                                                 </button>
                                                             ))}
@@ -697,37 +711,66 @@ export default function Home() {
                                                     <button
                                                         onClick={() => handleGeneratePro("summary")}
                                                         disabled={isGeneratingPro}
-                                                        className="w-full flex items-center justify-center gap-2 p-3 bg-strava text-white font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                                                        className="group relative w-full flex items-center justify-center gap-2 p-3.5 bg-gradient-to-r from-strava to-orange-500 text-white font-black rounded-xl overflow-hidden transition-all hover:shadow-lg hover:shadow-strava/30 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100"
                                                     >
-                                                        {isGeneratingPro ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                                                        {isGeneratingPro ? t.generating : t.generateSummary}
+                                                        <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                                        <span className="relative flex items-center gap-2">
+                                                            {isGeneratingPro ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                                                            {isGeneratingPro ? t.generating : t.generateBtnLabel}
+                                                        </span>
                                                     </button>
                                                     {proInsight && (
-                                                        <div className="p-3 bg-white/5 border border-white/10 rounded-xl text-sm text-neutral-200 leading-relaxed">
+                                                        <div className="relative p-3.5 bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-xl text-sm text-neutral-100 leading-relaxed">
+                                                            <div className="absolute -top-1.5 left-3 px-2 py-0.5 bg-strava rounded-md text-[9px] font-black uppercase tracking-widest text-white">
+                                                                IA
+                                                            </div>
                                                             {proInsight}
                                                         </div>
                                                     )}
-                                                    <div>
-                                                        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1.5">{t.annualGoalTitle}</p>
-                                                        <div className="flex gap-2">
-                                                            <input
-                                                                type="number"
-                                                                value={annualGoalInput}
-                                                                onChange={(e) => setAnnualGoalInput(e.target.value)}
-                                                                placeholder={t.annualGoalPlaceholder}
-                                                                className="flex-1 px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-strava"
-                                                            />
-                                                            <button
-                                                                onClick={handleSaveGoal}
-                                                                className="px-3 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-neutral-200 transition-colors"
-                                                            >
-                                                                {t.annualGoalSave}
-                                                            </button>
-                                                        </div>
-                                                        {annualGoalKm && (
-                                                            <p className="text-[10px] text-neutral-500 mt-1.5">
-                                                                {annualGoalKm} km {t.annualGoalCurrent}
+                                                    {/* ─── Meta anual con progreso ─── */}
+                                                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 space-y-2.5">
+                                                        <div className="flex items-center justify-between">
+                                                            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                                <Target className="w-3.5 h-3.5 text-strava" /> {t.annualGoalTitle}
                                                             </p>
+                                                            {annualGoalKm && (
+                                                                <button onClick={() => setAnnualGoalInput(String(annualGoalKm))} className="text-[10px] font-bold text-neutral-500 hover:text-white uppercase tracking-widest">
+                                                                    {t.annualGoalEdit}
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                        {annualGoalKm ? (
+                                                            <div className="space-y-1.5">
+                                                                <div className="flex items-baseline justify-between">
+                                                                    <span className="text-sm font-black text-white">{annualGoalKm} km</span>
+                                                                    <span className="text-[10px] text-neutral-500 font-semibold">{annualGoalKm} km {t.annualGoalCurrent}</span>
+                                                                </div>
+                                                                <div className="w-full h-2 rounded-full bg-neutral-900 border border-white/5 overflow-hidden">
+                                                                    <div
+                                                                        className={`h-full rounded-full transition-all duration-700 ${annualGoalProgress >= 100 ? "bg-gradient-to-r from-emerald-500 to-green-400" : "bg-gradient-to-r from-strava to-orange-500"}`}
+                                                                        style={{ width: `${Math.min(100, annualGoalProgress)}%` }}
+                                                                    />
+                                                                </div>
+                                                                <p className="text-[10px] font-semibold text-neutral-500">
+                                                                    {annualGoalProgress >= 100 ? t.goalReached : `${annualGoalProgress}% · ${t.progressLabel}`}
+                                                                </p>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex gap-2">
+                                                                <input
+                                                                    type="number"
+                                                                    value={annualGoalInput}
+                                                                    onChange={(e) => setAnnualGoalInput(e.target.value)}
+                                                                    placeholder={t.annualGoalPlaceholder}
+                                                                    className="flex-1 px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-strava"
+                                                                />
+                                                                <button
+                                                                    onClick={handleSaveGoal}
+                                                                    className="px-3.5 py-2 bg-white text-black text-xs font-black rounded-lg hover:bg-neutral-200 transition-colors"
+                                                                >
+                                                                    {t.annualGoalSave}
+                                                                </button>
+                                                            </div>
                                                         )}
                                                     </div>
                                                 </>
@@ -752,10 +795,13 @@ export default function Home() {
                                                     <button
                                                         onClick={handleUpgrade}
                                                         disabled={isUpgrading}
-                                                        className="w-full flex items-center justify-center gap-2 p-3 bg-strava text-white font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                                                        className="group relative w-full flex items-center justify-center gap-2 p-3.5 bg-gradient-to-r from-strava to-orange-500 text-white font-black rounded-xl overflow-hidden transition-all hover:shadow-lg hover:shadow-strava/30 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100"
                                                     >
-                                                        {isUpgrading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crown className="w-4 h-4" />}
-                                                        {isUpgrading ? t.proUpgrading : t.upgradeBtn}
+                                                        <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                                        <span className="relative flex items-center gap-2">
+                                                            {isUpgrading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Crown className="w-5 h-5" />}
+                                                            {isUpgrading ? t.proUpgrading : t.upgradeBtn}
+                                                        </span>
                                                     </button>
                                                     <p className="text-center text-[10px] text-neutral-600">{t.proCancelAnyTime}</p>
                                                 </>

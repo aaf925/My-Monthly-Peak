@@ -30,6 +30,13 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({
             ok: true,
             totalMonths: totals.length,
+            yearTotalKm: Math.round(
+                (totals
+                    .filter((m) => m.year === new Date().getFullYear())
+                    .reduce((acc, m) => acc + m.distance, 0) /
+                    1000) *
+                    10
+            ) / 10,
             records: {
                 distance: records.bestDistanceMonth
                     ? { month: monthName(records.bestDistanceMonth), year: records.bestDistanceMonth.year, value: fmt(records.bestDistanceMonth, "km") }
