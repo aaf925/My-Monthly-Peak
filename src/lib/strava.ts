@@ -95,6 +95,27 @@ export async function exchangeCodeForToken(code: string): Promise<StravaTokenRes
     return res.json();
 }
 
+/**
+ * Refresca el access token de Strava con el refresh token.
+ * Devuelve el nuevo par de tokens (access + refresh, que rota).
+ */
+export async function refreshStravaToken(
+    refreshToken: string
+): Promise<{ access_token: string; refresh_token: string; expires_at: number }> {
+    const res = await fetch('https://www.strava.com/oauth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            refresh_token: refreshToken,
+            grant_type: 'refresh_token',
+        }),
+    });
+    if (!res.ok) throw new Error(`Token refresh failed: ${res.status} ${await res.text()}`);
+    return res.json();
+}
+
 // ─── Data Fetching ────────────────────────────────────────────────────────────
 
 /**

@@ -266,7 +266,6 @@ export default function Home() {
     const handleExport = async () => {
         setIsExporting(true);
         try {
-            // Exportación server-side con @vercel/og: FREE → marca de agua, PRO → limpia.
             const params = new URLSearchParams({
                 distance: String(stats.totalDistance),
                 elevation: String(stats.totalElevation),
@@ -279,6 +278,41 @@ export default function Home() {
                 sport: stats.dominantSport,
                 lang,
             });
+
+            // PRO: añadir insights (tendencias 6 meses, meta anual, zonas de esfuerzo)
+            if (plan === "PRO") {
+                try {
+                    const insRes = await fetch(
+                        `/api/pro/insights?year=${stats.year}&month=${stats.monthIndex}${
+                            selectedSport !== "all" ? `&type=${selectedSport}` : ""
+                        }`,
+                        { credentials: "include" }
+                    );
+                    if (insRes.ok) {
+                        const ins = await insRes.json();
+                        if (ins?.ok) {
+                            if (ins.trend?.length) {
+                                params.set(
+                                    "trend",
+                                    ins.trend.map((p: { label: string; distanceKm: number }) => `${p.label}=${p.distanceKm}`).join(",")
+                                );
+                            }
+                            if (ins.progress?.percent !== null && ins.progress?.percent !== undefined) {
+                                params.set("goalPercent", String(ins.progress.percent));
+                                params.set("goalCurrentKm", String(ins.progress.currentKm));
+                                params.set("goalKm", String(ins.progress.goalKm ?? ""));
+                            }
+                            if (ins.zones?.distributionPct?.length) {
+                                params.set("zones", ins.zones.distributionPct.join(","));
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error("No se pudieron cargar insights para la exportación:", err);
+                }
+            }
+
+            // Exportación server-side con @vercel/og: FREE → marca de agua, PRO → limpia.
             const res = await fetch(`/api/og/monthly-summary?${params.toString()}`, {
                 credentials: "include",
             });

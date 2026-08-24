@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db";
 import { findOrCreateUserFromCookie, ProRequiredError } from "@/lib/plans";
 import { fetchMonthlyActivities } from "@/lib/strava";
+import { getValidStravaToken } from "@/lib/strava-session";
 import { computeTrueEffortForActivity } from "@/lib/true-effort";
 import { generateInsight, type InsightKind } from "@/lib/ai";
 
@@ -31,8 +32,8 @@ export async function POST(req: NextRequest) {
         if (month < 0 || month > 11) throw new ProRequiredError("Mes inválido", 400);
 
         const prisma = getPrisma();
-        const accessToken = user.stravaAccessToken;
-        if (!accessToken) throw new ProRequiredError("Sin token de Strava", 401);
+        // Token válido (refresca automáticamente si caducó)
+        const accessToken = await getValidStravaToken(user.id);
 
         // 1. Traer actividades del mes desde Strava
         let activities = await fetchMonthlyActivities(accessToken, year, month);

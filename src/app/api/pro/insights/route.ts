@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findOrCreateUserFromCookie, ProRequiredError } from "@/lib/plans";
+import { getValidStravaToken } from "@/lib/strava-session";
 import { scanAllMonthlyTotals } from "@/lib/records";
 import { getTrend, getYearProgress, computeEffortZones } from "@/lib/trends";
 import { fetchMonthlyActivities } from "@/lib/strava";
@@ -19,18 +20,21 @@ export async function GET(req: NextRequest) {
         }
         if (!user.stravaAccessToken) throw new ProRequiredError("Sin token de Strava", 401);
 
+        // Token válido (refresca automáticamente si caducó)
+        const accessToken = await getValidStravaToken(user.id);
+
         const { searchParams } = new URL(req.url);
         const year = Number(searchParams.get("year") ?? new Date().getFullYear());
         const month = Number(searchParams.get("month") ?? new Date().getMonth());
         const type = searchParams.get("type") ?? undefined;
 
         // 1. Tendencias (6 meses) y meta anual
-        const totals = await scanAllMonthlyTotals(user.stravaAccessToken);
+        const totals = await scanAllMonthlyTotals(accessToken);
         const trend = getTrend(totals, 6);
         const progress = getYearProgress(totals, year, user.annualGoalKm);
 
         // 2. Zonas de esfuerzo del mes (filtradas por tipo si aplica)
-        let activities = await fetchMonthlyActivities(user.stravaAccessToken, year, month);
+        let activities = await fetchMonthlyActivities(accessToken, year, month);
         if (type) activities = activities.filter((a) => a.type === type);
         const zones = computeEffortZones(activities, user.maxHeartRate);
 

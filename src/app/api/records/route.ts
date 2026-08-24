@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findOrCreateUserFromCookie, ProRequiredError } from "@/lib/plans";
+import { getValidStravaToken } from "@/lib/strava-session";
 import { scanAllMonthlyTotals, computePersonalRecords, type MonthTotals } from "@/lib/records";
 
 export const runtime = "nodejs";
@@ -16,7 +17,8 @@ export async function GET(req: NextRequest) {
         }
 
         // Récords personales: feature FREE, disponible para todos los autenticados.
-        const totals = await scanAllMonthlyTotals(user.stravaAccessToken);
+        const accessToken = await getValidStravaToken(user.id);
+        const totals = await scanAllMonthlyTotals(accessToken);
         const records = computePersonalRecords(totals);
 
         const monthName = (m: MonthTotals) =>
