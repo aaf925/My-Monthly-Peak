@@ -239,7 +239,7 @@ export default function MonthlySummaryCard({
                                     const h = Math.max(8, (p.distanceKm / max) * 44);
                                     return (
                                         <div key={p.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", flex: 1 }}>
-                                            <div style={{ width: "14px", borderRadius: "4px", height: `${h}px`, background: STRAVA }} />
+                                            <div style={{ display: "flex", width: "14px", borderRadius: "4px", height: `${h}px`, background: STRAVA }} />
                                             <span style={{ fontSize: "10px", fontWeight: 600, color: "#737373" }}>{p.label}</span>
                                         </div>
                                     );
@@ -267,8 +267,8 @@ export default function MonthlySummaryCard({
                             <span style={{ fontSize: "26px", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em" }}>
                                 {goalPercent}%
                             </span>
-                            <div style={{ width: "100%", height: "10px", borderRadius: "9999px", background: "#262626", overflow: "hidden" }}>
-                                <div style={{ width: `${goalPercent}%`, height: "100%", borderRadius: "9999px", background: "#10B981" }} />
+                            <div style={{ display: "flex", width: "100%", height: "10px", borderRadius: "9999px", background: "#262626", overflow: "hidden" }}>
+                                <div style={{ display: "flex", width: `${goalPercent}%`, height: "100%", borderRadius: "9999px", background: "#10B981" }} />
                             </div>
                             <span style={{ fontSize: "12px", fontWeight: 600, color: "#737373" }}>
                                 {goalCurrentKm} / {goalKm} km
@@ -296,8 +296,8 @@ export default function MonthlySummaryCard({
                                 {zones.map((pct, i) => (
                                     <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                         <span style={{ fontSize: "11px", fontWeight: 800, color: "#A3A3A3", width: "20px" }}>Z{i + 1}</span>
-                                        <div style={{ flex: 1, height: "8px", borderRadius: "9999px", background: "#262626", overflow: "hidden" }}>
-                                            <div style={{ width: `${Math.max(4, pct)}%`, height: "100%", borderRadius: "9999px", background: ["#3B82F6", "#10B981", "#F59E0B", "#F97316", "#EF4444"][i] }} />
+                                        <div style={{ display: "flex", flex: 1, height: "8px", borderRadius: "9999px", background: "#262626", overflow: "hidden" }}>
+                                            <div style={{ display: "flex", width: `${Math.max(4, pct)}%`, height: "100%", borderRadius: "9999px", background: ["#3B82F6", "#10B981", "#F59E0B", "#F97316", "#EF4444"][i] }} />
                                         </div>
                                         <span style={{ fontSize: "11px", fontWeight: 700, color: "#fff", width: "28px", textAlign: "right" }}>{pct}%</span>
                                     </div>
