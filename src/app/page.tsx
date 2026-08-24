@@ -99,6 +99,7 @@ export default function Home() {
     const [annualGoalInput, setAnnualGoalInput] = useState("");
     const [annualGoalProgress, setAnnualGoalProgress] = useState(0);
     const [yearDistanceKm, setYearDistanceKm] = useState<number | null>(null);
+    const [isEditingGoal, setIsEditingGoal] = useState(false);
 
     const [targetYear, setTargetYear] = useState(new Date().getFullYear());
     const [targetMonth, setTargetMonth] = useState(new Date().getMonth());
@@ -436,6 +437,7 @@ export default function Home() {
             const data = await res.json();
             if (data?.ok) {
                 setAnnualGoalKm(data.annualGoalKm ?? km);
+                setIsEditingGoal(false);
             } else {
                 setError(data?.error ?? "Error al guardar la meta");
             }
@@ -733,17 +735,41 @@ export default function Home() {
                                                             <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-1.5">
                                                                 <Target className="w-3.5 h-3.5 text-strava" /> {t.annualGoalTitle}
                                                             </p>
-                                                            {annualGoalKm && (
-                                                                <button onClick={() => setAnnualGoalInput(String(annualGoalKm))} className="text-[10px] font-bold text-neutral-500 hover:text-white uppercase tracking-widest">
+                                                            {annualGoalKm && !isEditingGoal && (
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setAnnualGoalInput(String(annualGoalKm));
+                                                                        setIsEditingGoal(true);
+                                                                    }}
+                                                                    className="text-[10px] font-bold text-strava hover:text-orange-400 uppercase tracking-widest transition-colors"
+                                                                >
                                                                     {t.annualGoalEdit}
                                                                 </button>
                                                             )}
                                                         </div>
-                                                        {annualGoalKm ? (
+                                                        {isEditingGoal || !annualGoalKm ? (
+                                                            <div className="flex gap-2">
+                                                                <input
+                                                                    type="number"
+                                                                    inputMode="numeric"
+                                                                    value={annualGoalInput}
+                                                                    onChange={(e) => setAnnualGoalInput(e.target.value)}
+                                                                    placeholder={t.annualGoalPlaceholder}
+                                                                    className="goal-input flex-1 px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-strava"
+                                                                />
+                                                                <button
+                                                                    onClick={handleSaveGoal}
+                                                                    disabled={!annualGoalInput}
+                                                                    className="px-3.5 py-2 bg-strava text-white text-xs font-black rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+                                                                >
+                                                                    {t.annualGoalSave}
+                                                                </button>
+                                                            </div>
+                                                        ) : (
                                                             <div className="space-y-1.5">
                                                                 <div className="flex items-baseline justify-between">
                                                                     <span className="text-sm font-black text-white">{annualGoalKm} km</span>
-                                                                    <span className="text-[10px] text-neutral-500 font-semibold">{annualGoalKm} km {t.annualGoalCurrent}</span>
+                                                                    <span className="text-[10px] text-neutral-500 font-semibold">{yearDistanceKm ?? 0} / {annualGoalKm} km</span>
                                                                 </div>
                                                                 <div className="w-full h-2 rounded-full bg-neutral-900 border border-white/5 overflow-hidden">
                                                                     <div
@@ -754,22 +780,6 @@ export default function Home() {
                                                                 <p className="text-[10px] font-semibold text-neutral-500">
                                                                     {annualGoalProgress >= 100 ? t.goalReached : `${annualGoalProgress}% · ${t.progressLabel}`}
                                                                 </p>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex gap-2">
-                                                                <input
-                                                                    type="number"
-                                                                    value={annualGoalInput}
-                                                                    onChange={(e) => setAnnualGoalInput(e.target.value)}
-                                                                    placeholder={t.annualGoalPlaceholder}
-                                                                    className="flex-1 px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-strava"
-                                                                />
-                                                                <button
-                                                                    onClick={handleSaveGoal}
-                                                                    className="px-3.5 py-2 bg-white text-black text-xs font-black rounded-lg hover:bg-neutral-200 transition-colors"
-                                                                >
-                                                                    {t.annualGoalSave}
-                                                                </button>
                                                             </div>
                                                         )}
                                                     </div>

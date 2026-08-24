@@ -38,3 +38,14 @@ body {
     stroke-dashoffset: 0;
   }
 }
+
+/* Quitar los spinners (flechas arriba/abajo) de los inputs numéricos */
+.goal-input::-webkit-outer-spin-button,
+.goal-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.goal-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
