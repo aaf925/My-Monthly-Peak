@@ -702,10 +702,10 @@ export default function Home() {
                                                                 <button
                                                                     key={value}
                                                                     onClick={() => setSelectedSport(value)}
-                                                                    className={`flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all border ${selectedSport === value ? "bg-white text-black border-white shadow-lg shadow-white/10" : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:text-white hover:border-neutral-600"}`}
+                                                                    className={`flex flex-col items-center justify-center gap-1 px-2 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all border text-center leading-tight ${selectedSport === value ? "bg-white text-black border-white shadow-lg shadow-white/10" : "bg-neutral-950 text-neutral-500 border-neutral-800 hover:text-white hover:border-neutral-600"}`}
                                                                 >
-                                                                    <Icon className="w-3.5 h-3.5" />
-                                                                    {label}
+                                                                    <Icon className={`w-5 h-5 shrink-0 ${selectedSport === value ? "text-black" : ""}`} />
+                                                                    <span className="w-full truncate">{label}</span>
                                                                 </button>
                                                             ))}
                                                         </div>
