@@ -13,7 +13,7 @@ import {
 } from "@/lib/strava";
 import { translations, Language } from "@/lib/translations";
 import { exportAsImage } from "@/lib/export";
-import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell, Medal, TrendingUp, Target, HeartPulse, Footprints, Bike, Waves, Mountain } from "lucide-react";
+import { Share2, Zap, ArrowRight, LogOut, Loader2, AlertCircle, Settings2, Check, CalendarDays, Crown, Sparkles, Wand2, Thermometer, Bell, Medal, TrendingUp, Target, HeartPulse, Footprints, Bike, Waves, Trees } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const DEMO_STATS: ActivityStats = {
@@ -697,7 +697,7 @@ export default function Home() {
                                                                 ["Ride", t.sportRide, Bike],
                                                                 ["Swim", t.sportSwim, Waves],
                                                                 ["Walk", t.sportWalk, Footprints],
-                                                                ["Hike", t.sportHike, Mountain],
+                                                                ["Hike", t.sportHike, Trees],
                                                             ] as const).map(([value, label, Icon]) => (
                                                                 <button
                                                                     key={value}

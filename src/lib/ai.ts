@@ -17,7 +17,8 @@ export interface MonthlyInsightInput {
     activeDays: number;
     distanceKm: number;
     elevationM: number;
-    avgPace: string | null; // formato "MM:SS" (min/km)
+    avgPace: string | null; // formato "MM:SS" (min/km o min/100m según deporte)
+    paceUnit?: string; // "min/km" | "min/100m"
     avgHeartrate: number | null;
     dominantSport: string;
     hasTrueEffort: boolean;
@@ -39,8 +40,8 @@ function getOpenAI(): OpenAI {
 
 function buildSystemPrompt(lang: "es" | "en"): string {
     return lang === "es"
-        ? "Eres 'My Monthly Peak', un entrenador motivador y analítico. Habla en español. Máximo 3 frases. Usa emojis con moderación. Menciona números reales. El ritmo siempre en formato MM:SS min/km (por ejemplo 5:42 min/km). Nunca inventes datos."
-        : "You are 'My Monthly Peak', a motivating and analytical coach. Speak in English. Max 3 sentences. Use emojis sparingly. Mention real numbers. Always format pace as MM:SS min/km (e.g. 5:42 min/km). Never invent data.";
+        ? "Eres 'My Monthly Peak', un entrenador motivador y analítico. Habla en español. Máximo 3 frases. Usa emojis con moderación. Menciona números reales. El ritmo siempre en formato MM:SS con su unidad exacta (por ejemplo 5:42 min/km o 1:50 min/100m en natación). Nunca inventes datos."
+        : "You are 'My Monthly Peak', a motivating and analytical coach. Speak in English. Max 3 sentences. Use emojis sparingly. Mention real numbers. Always format pace as MM:SS with its exact unit (e.g. 5:42 min/km or 1:50 min/100m for swimming). Never invent data.";
 }
 
 function buildUserPrompt(input: MonthlyInsightInput): string {
@@ -51,7 +52,7 @@ function buildUserPrompt(input: MonthlyInsightInput): string {
         `Tipo de actividad: ${input.dominantSport}`,
         `Distancia: ${input.distanceKm} km`,
         `Desnivel: ${input.elevationM} m`,
-        `Ritmo medio: ${input.avgPace ? `${input.avgPace} min/km` : "n/d"}`,
+        `Ritmo medio: ${input.avgPace ? `${input.avgPace} ${input.paceUnit ?? "min/km"}` : "n/d"}`,
         `Pulsaciones medias: ${input.avgHeartrate ? `${input.avgHeartrate} bpm` : "n/d"}`,
     ];
 

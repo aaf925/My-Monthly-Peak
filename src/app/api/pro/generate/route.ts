@@ -127,9 +127,11 @@ export async function POST(req: NextRequest) {
 
         const kind = body.kind ?? "summary";
         const avgSpeedMps = totals.speed / Math.max(activities.length, 1);
-        // average_speed de Strava viene en m/s → ritmo en seg/km: 1000/speed
-        const avgPaceSecPerKm = avgSpeedMps > 0 ? 1000 / avgSpeedMps : null;
-        // Formato "MM:SS" (ej. 5:42 min/km)
+        // average_speed de Strava viene en m/s → ritmo en seg por unidad de distancia
+        const isSwim = selectedType === "Swim";
+        const paceUnit = isSwim ? 100 : 1000; // natación: /100m · resto: /km
+        const avgPaceSec = avgSpeedMps > 0 ? paceUnit / avgSpeedMps : null;
+        // Formato "MM:SS" (ej. 5:42 min/km · 1:50 min/100m en natación)
         const formatPace = (sec: number | null) => {
             if (!sec) return null;
             const m = Math.floor(sec / 60);
@@ -148,9 +150,10 @@ export async function POST(req: NextRequest) {
             ).size,
             distanceKm: Math.round((totals.distance / 1000) * 10) / 10,
             elevationM: Math.round(totals.elevation),
-            avgPace: formatPace(avgPaceSecPerKm),
+            avgPace: formatPace(avgPaceSec),
             avgHeartrate: totals.hrCount ? Math.round(totals.hr / totals.hrCount) : null,
             dominantSport: selectedType ?? "Run",
+            paceUnit: isSwim ? "min/100m" : "min/km",
             hasTrueEffort: trueEffortPace !== null,
         });
 
