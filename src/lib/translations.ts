@@ -98,6 +98,9 @@ export const translations = {
         progressLabel: "Progreso",
         goalReached: "¡Meta conseguida!",
         generateBtnLabel: "Crear mi resumen",
+        tabData: "Datos",
+        tabRecords: "Récords",
+        tabPro: "Pro",
 
         // month names
         monthsLong: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -204,6 +207,9 @@ export const translations = {
         progressLabel: "Progress",
         goalReached: "Goal achieved!",
         generateBtnLabel: "Create my summary",
+        tabData: "Data",
+        tabRecords: "Records",
+        tabPro: "Pro",
 
         // month names
         monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

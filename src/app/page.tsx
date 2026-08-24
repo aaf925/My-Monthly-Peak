@@ -100,6 +100,7 @@ export default function Home() {
     const [annualGoalProgress, setAnnualGoalProgress] = useState(0);
     const [yearDistanceKm, setYearDistanceKm] = useState<number | null>(null);
     const [isEditingGoal, setIsEditingGoal] = useState(false);
+    const [panelTab, setPanelTab] = useState<"data" | "records" | "pro">("data");
 
     const [targetYear, setTargetYear] = useState(new Date().getFullYear());
     const [targetMonth, setTargetMonth] = useState(new Date().getMonth());
@@ -545,14 +546,26 @@ export default function Home() {
                                     animate={{ opacity: 1, height: "auto" }}
                                     className="mt-8 overflow-hidden"
                                 >
-                                    <div className="p-5 bg-neutral-900/50 backdrop-blur-md rounded-2xl border border-white/5 text-left max-w-sm mx-auto md:mx-0">
-                                        <div className="flex items-center gap-2 mb-4 justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <Settings2 className="w-4 h-4 text-neutral-400" />
-                                                <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-300">{t.smartSelector}</h3>
-                                            </div>
+                                    <div className="p-5 bg-neutral-900/50 backdrop-blur-md rounded-2xl border border-white/5 text-left max-w-[19rem] mx-auto md:mx-0">
+                                        {/* ─── TABS ─── */}
+                                        <div className="flex gap-1 mb-4 p-1 bg-neutral-950/80 border border-white/5 rounded-xl">
+                                            {([
+                                                ["data", t.tabData],
+                                                ["records", t.tabRecords],
+                                                ["pro", t.tabPro],
+                                            ] as const).map(([value, label]) => (
+                                                <button
+                                                    key={value}
+                                                    onClick={() => setPanelTab(value)}
+                                                    className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${panelTab === value ? "bg-strava text-white shadow" : "text-neutral-500 hover:text-white"}`}
+                                                >
+                                                    {label}
+                                                </button>
+                                            ))}
                                         </div>
 
+                                        {panelTab === "data" && (
+                                            <>
                                         {/* ─── SELECTORES CON SOLAMENTE FECHAS VÁLIDAS ─── */}
                                         {activeYears.length > 0 && (
                                             <div className="mb-6 space-y-3">
@@ -605,7 +618,11 @@ export default function Home() {
                                                 );
                                             })}
                                         </div>
+                                        </>
+                                        )}
 
+                                        {panelTab === "records" && (
+                                            <>
                                         {/* ─── RECORDATORIO MENSUAL ─── */}
                                         {isAuthenticated && (
                                             <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
@@ -680,7 +697,11 @@ export default function Home() {
                                                 })}
                                             </div>
                                         )}
+                                        </>
+                                        )}
 
+                                        {panelTab === "pro" && (
+                                            <>
                                         {/* ─── PLAN PRO ─── */}
                                         <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
                                             {plan === "PRO" ? (
@@ -819,6 +840,8 @@ export default function Home() {
                                                 </>
                                             )}
                                         </div>
+                                        </>
+                                        )}
                                     </div>
                                 </motion.div>
                             )}
