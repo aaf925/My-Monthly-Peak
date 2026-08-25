@@ -77,8 +77,8 @@ export async function GET(req: NextRequest) {
             />
         ),
         {
-            width: 1200,
-            height: 630,
+            width: 1080,
+            height: 1920,
             fonts,
             headers: {
                 "Cache-Control": "public, max-age=0, must-revalidate",
