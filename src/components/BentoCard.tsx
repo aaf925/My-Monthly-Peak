@@ -40,6 +40,7 @@ interface BentoCardProps {
     config: CardConfig;
     isLoading?: boolean;
     lang?: Language;
+    watermark?: boolean;
 }
 
 const containerVars = {
@@ -75,7 +76,7 @@ const ComparisonBadge = ({ current, prev, show }: { current: number, prev?: numb
     );
 };
 
-const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, config, isLoading, lang = 'es' }) => {
+const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, config, isLoading, lang = 'es', watermark }) => {
     const t = translations[lang];
 
     const svgPath = useMemo(() => {
@@ -94,6 +95,13 @@ const BentoCard: React.FC<BentoCardProps> = ({ stats, prevStats, userName, confi
             animate="show"
             className="relative w-full max-w-[380px] min-h-[620px] bg-neutral-950 text-white rounded-[2.5rem] overflow-hidden border border-neutral-800 shadow-2xl p-5 flex flex-col justify-between"
         >
+            {watermark && (
+                <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none select-none">
+                    <span className="transform -rotate-18 text-3xl font-extrabold uppercase tracking-[0.18em] text-white/10 whitespace-nowrap">
+                        Generado con My Monthly Peak
+                    </span>
+                </div>
+            )}
             <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
                 <div className="absolute -top-32 -right-32 w-80 h-80 bg-strava/15 blur-[100px] rounded-full" />
                 <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-blue-600/15 blur-[100px] rounded-full" />

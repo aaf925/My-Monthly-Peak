@@ -101,6 +101,7 @@ export default function Home() {
     const [yearDistanceKm, setYearDistanceKm] = useState<number | null>(null);
     const [isEditingGoal, setIsEditingGoal] = useState(false);
     const [panelTab, setPanelTab] = useState<"data" | "records" | "pro">("data");
+    const [showWatermark, setShowWatermark] = useState(false);
 
     const [targetYear, setTargetYear] = useState(new Date().getFullYear());
     const [targetMonth, setTargetMonth] = useState(new Date().getMonth());
@@ -273,72 +274,16 @@ export default function Home() {
     const handleExport = async () => {
         setIsExporting(true);
         try {
-            const params = new URLSearchParams({
-                distance: String(stats.totalDistance),
-                elevation: String(stats.totalElevation),
-                time: String(stats.totalTime),
-                month: String(stats.monthIndex),
-                year: String(stats.year),
-                name: isAuthenticated ? tokenData?.athlete?.firstname ?? "Atleta" : "DemoAthlete",
-                activities: String(stats.activityCount),
-                activeDays: String(stats.activeDaysCount),
-                sport: stats.dominantSport,
-                lang,
-            });
-
-            // PRO: añadir insights (tendencias 6 meses, meta anual, zonas de esfuerzo)
-            if (plan === "PRO") {
-                try {
-                    const insRes = await fetch(
-                        `/api/pro/insights?year=${stats.year}&month=${stats.monthIndex}${
-                            selectedSport !== "all" ? `&type=${selectedSport}` : ""
-                        }`,
-                        { credentials: "include" }
-                    );
-                    if (insRes.ok) {
-                        const ins = await insRes.json();
-                        if (ins?.ok) {
-                            if (ins.trend?.length) {
-                                params.set(
-                                    "trend",
-                                    ins.trend.map((p: { label: string; distanceKm: number }) => `${p.label}=${p.distanceKm}`).join(",")
-                                );
-                            }
-                            if (ins.progress?.percent !== null && ins.progress?.percent !== undefined) {
-                                params.set("goalPercent", String(ins.progress.percent));
-                                params.set("goalCurrentKm", String(ins.progress.currentKm));
-                                params.set("goalKm", String(ins.progress.goalKm ?? ""));
-                            }
-                            if (ins.zones?.distributionPct?.length) {
-                                params.set("zones", ins.zones.distributionPct.join(","));
-                            }
-                        }
-                    }
-                } catch (err) {
-                    console.error("No se pudieron cargar insights para la exportación:", err);
-                }
-            }
-
-            // Exportación server-side con @vercel/og: FREE → marca de agua, PRO → limpia.
-            const res = await fetch(`/api/og/monthly-summary?${params.toString()}`, {
-                credentials: "include",
-            });
-            if (!res.ok) throw new Error(`OG ${res.status}`);
-            const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = `Story_Strava_${stats.year}_${stats.monthIndex + 1}.png`;
-            link.click();
-            URL.revokeObjectURL(url);
+            // FREE → capturar la tarjeta con marca de agua; PRO → limpia.
+            setShowWatermark(plan !== "PRO");
+            // Esperar un render para que la marca de agua se pinte antes de capturar.
+            await new Promise((r) => setTimeout(r, 100));
+            await exportAsImage("recap-card", `Story_Strava_${stats.year}_${stats.monthIndex + 1}`);
         } catch (err) {
-            console.error("Export server-side falló, usando fallback local:", err);
-            try {
-                await exportAsImage("recap-card", `Story_Strava_${stats.year}_${stats.monthName}`);
-            } catch (err2) {
-                alert("Hubo un error al exportar. Inténtalo de nuevo.");
-            }
+            console.error("Export falló:", err);
+            alert("Hubo un error al exportar. Inténtalo de nuevo.");
         } finally {
+            setShowWatermark(false);
             setIsExporting(false);
         }
     };
@@ -866,6 +811,7 @@ export default function Home() {
                                     userName={isAuthenticated ? tokenData?.athlete?.firstname ?? "Atleta" : "DemoAthlete"}
                                     isLoading={isLoading}
                                     lang={lang}
+                                    watermark={showWatermark}
                                 />
                             </motion.div>
                         ) : (
